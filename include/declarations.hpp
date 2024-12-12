@@ -1,5 +1,5 @@
-#ifndef UTILS
-#define UTILS
+#ifndef DECLARATIONS_H
+#define DECLARATIONS_H
 
 #include <map>
 #include <string>
@@ -11,11 +11,11 @@ struct iVec2D {
 
 struct InputStatus {
     const bool status;
-    const std::string user_input;
+    const std::string userInput;
 
     InputStatus(
         const bool _status, const std::string &_user_input = "")
-        : status(_status), user_input(_user_input) {}
+        : status(_status), userInput(_user_input) {}
 };
 
 struct ChoiceStatus {
@@ -38,7 +38,7 @@ enum class OPTION {
     QUIT = 8
 };
 
-const std::map<OPTION, std::string> all_options{
+const std::map<OPTION, std::string> allOptions{
     {OPTION::PROCESS_CONFIG_FILE, "Read in and process a configuration file"},
     {OPTION::DISPLAY_CITY_MAP, "Display city map"},
     {OPTION::COVERAGE_MAP_IDX, "Display cloud coverage map (cloudiness index)"},

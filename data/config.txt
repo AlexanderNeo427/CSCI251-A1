@@ -7,12 +7,12 @@ GridX_IdxRange=0-8
 GridY_IdxRange=0-8
 
 // [x,y] grid-areas which are occupied by cities
-citylocation.txt
+./data/citylocation.txt
 
 // "next day" forecasted cloud coverage (%) for 
 // each [x,y] grid-area
-cloudcover.txt
+./data/cloudcover.txt
 
 // "next day" forecasted atmospheric pressure intensity (%) for
 // each [x,y] grid-area
-pressure.txt
+./data/pressure.txt

@@ -2,34 +2,46 @@
 #include <iostream>
 
 int main() {
+    int **g_pCityMap = nullptr;
+    int **g_pCloudMap = nullptr;
+    int **g_pPressureGrid = nullptr;
+
     while (true) {
         for (int i = 0; i < 3; i++) {
             std::cout << std::endl;
         }
 
-        WeatherApp::print_main_menu();
+        WeatherApp::PrintMainMenu();
 
-        const InputStatus inputStatus = WeatherApp::await_user_input();
+        const InputStatus inputStatus = WeatherApp::AwaitUserInput();
         if (!inputStatus.status || std::cin.fail()) {
             std::cin.clear();
             std::cout << "Please enter a single digit number from 1-9" << std::endl;
             continue;
         }
 
-        const ChoiceStatus choiceStatus = WeatherApp::get_choice_status(inputStatus.user_input);
+        const ChoiceStatus choiceStatus = WeatherApp::GetChoiceStatus(inputStatus.userInput);
         if (!choiceStatus.status) {
             std::cout << "Please enter a single digit number from 1-9" << std::endl;
             continue;
         }
 
-        const OPTION user_option = static_cast<OPTION>(choiceStatus.choice);
-        if (user_option == OPTION::QUIT) {
+        const OPTION userOption = static_cast<OPTION>(choiceStatus.choice);
+        if (userOption == OPTION::QUIT) {
             break;
         }
-
-        std::cout << "[ " << all_options.at(user_option) << " ]" << std::endl
+        
+        std::cout << "[ " << allOptions.at(userOption) << " ]" << std::endl
                   << std::endl;
-        WeatherApp::handle_option(user_option);
+
+        if (userOption == OPTION::PROCESS_CONFIG_FILE) {
+            
+        }
     }
+
+    delete g_pCityMap;
+    delete g_pCloudMap;
+    delete g_pPressureGrid;
+
     return EXIT_SUCCESS;
 };
