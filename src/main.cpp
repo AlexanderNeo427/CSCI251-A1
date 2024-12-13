@@ -35,6 +35,7 @@ int main() {
                   << std::endl;
 
         if (userOption == OPTION::PROCESS_CONFIG_FILE) {
+            FileOperations::ProcessConfigFile("./data/config.txt");
         }
     }
 

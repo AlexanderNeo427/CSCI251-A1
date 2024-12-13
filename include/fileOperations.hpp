@@ -8,7 +8,9 @@
 #include <vector>
 
 namespace FileOperations {
-    void ReadConfigFile(const std::string &filePath) {
+    void ProcessConfigFile(const std::string &filePath) {
+        std::vector<std::string> filesToProcess;
+
         std::ifstream configFile(filePath);
         if (!configFile) {
             std::cout << "Error reading from file at: " << filePath << std::endl;
@@ -20,21 +22,20 @@ namespace FileOperations {
             if (line.empty() || line.find("//") == 0) {
                 continue;
             }
-            if (Utils::strContains(line, '=')) {
-                const std::vector<std::string> data = Utils::strSplit(line, '.');
-                const std::string key = data[0];
-                const std::string gridRange = data[1];
-            }
-            if (!Utils::strEndsWith(line, ".txt")) {
-                continue;
-            }
+            if (Utils::StrContains(line, '=')) {
+                const std::vector<std::string> data = Utils::StrSplit(line, '=');
+                const std::string axisKey = data[0];
 
-            std::ifstream inFile(line);
-            if (!inFile) {
-                std::cout << "Error reading from file at: " << line << std::endl;
+                const std::vector<std::string> gridRange = Utils::StrSplit(data[1], '-');
+                const int rangeMin = std::stoi(gridRange[0]);
+                const int rangeMax = std::stoi(gridRange[1]);
+
+                std::cout << "Axis key: " << axisKey << std::endl;
+                std::cout << "Range min: " << rangeMin << std::endl;
+                std::cout << "Range max: " << rangeMax << std::endl;
+
                 continue;
             }
-            inFile.close();
         }
         configFile.close();
     }
