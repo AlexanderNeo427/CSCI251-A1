@@ -9,6 +9,11 @@ struct iVec2D {
     iVec2D(const int _x, const int _y) : x(_x), y(_y) {}
 };
 
+struct Grid {
+    iVec2D min;
+    const int width, height;
+};
+
 struct InputStatus {
     const bool status;
     const std::string userInput;

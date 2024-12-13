@@ -2,9 +2,9 @@
 #include <iostream>
 
 int main() {
-    int **g_pCityMap = nullptr;
-    int **g_pCloudMap = nullptr;
-    int **g_pPressureGrid = nullptr;
+    // int **pCityMap = nullptr;
+    // int **pCloudGrid = nullptr;
+    // int **pPressureGrid = nullptr;
 
     while (true) {
         for (int i = 0; i < 3; i++) {
@@ -30,18 +30,15 @@ int main() {
         if (userOption == OPTION::QUIT) {
             break;
         }
-        
+
         std::cout << "[ " << allOptions.at(userOption) << " ]" << std::endl
                   << std::endl;
 
         if (userOption == OPTION::PROCESS_CONFIG_FILE) {
-            
         }
     }
 
-    delete g_pCityMap;
-    delete g_pCloudMap;
-    delete g_pPressureGrid;
+    // TODO: De-allocate memory
 
     return EXIT_SUCCESS;
 };
