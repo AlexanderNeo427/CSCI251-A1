@@ -1,6 +1,8 @@
 # Compiler and Flags
 CXX = g++
-CXXFLAGS = -Wall -Werror -std=c++14 -Iinclude
+CXXFLAGS = -Wall -std=c++14 -Iinclude
+# CXXFLAGS_BUILD = -Wall -Wextra -Werror -std=c++14 -Iinclude
+# CXXFLAGS_DEBUG = -Wall -std=c++14 -Iinclude
 
 # Directories
 SRC_DIR = src

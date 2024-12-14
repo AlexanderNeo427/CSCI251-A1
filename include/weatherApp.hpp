@@ -1,9 +1,8 @@
 #ifndef WEATHER_APP_H
 #define WEATHER_APP_H
 
+#include "dataLoader.hpp"
 #include "declarations.hpp"
-#include "fileOperations.hpp"
-#include <cstdint>
 #include <iostream>
 
 namespace WeatherApp {
@@ -11,28 +10,25 @@ namespace WeatherApp {
         std::cout << "Student ID: 9085610" << std::endl;
         std::cout << "Student Name: Alexander Neo" << std::endl;
         std::cout << "-------------------------" << std::endl;
-        std::cout << "Welcome to Weather Information Processing System!" << std::endl << std::endl;
-        for (const std::pair<OPTION, std::string> op : allOptions) {
+        std::cout << "Welcome to Weather Information Processing System!" << std::endl
+                  << std::endl;
+        for (const std::pair<OPTION, std::string> op : ALL_OPTIONS) {
             std::cout << static_cast<int>(op.first) << ")    " << op.second << std::endl;
         }
-        std::cout << std::endl << "Please enter your choice: ";
+        std::cout << std::endl
+                  << "Please enter your choice: ";
     };
 
-    InputStatus AwaitUserInput() {
+    InputStatus AwaitValidInput() {
         std::string userInput;
         std::getline(std::cin, userInput);
-        if (userInput.empty()) {
+        if (std::cin.fail() || userInput.empty() || userInput.length() != 1 ||
+            userInput[0] < '0' || userInput[0] > '9') {
+            std::cin.clear();
             return InputStatus(false);
         }
-        return InputStatus(true, userInput);
+        return InputStatus(true, std::stoi(userInput));
     };
-
-    ChoiceStatus GetChoiceStatus(const std::string &userInput) {
-        if (userInput.length() != 1 || userInput[0] < '0' || userInput[0] > '9') {
-            return ChoiceStatus(false);
-        }
-        return ChoiceStatus(true, std::stoi(userInput));
-    }
 }; // namespace WeatherApp
 
 #endif

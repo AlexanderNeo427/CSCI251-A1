@@ -2,40 +2,28 @@
 #include <iostream>
 
 int main() {
-    // int **pCityMap = nullptr;
-    // int **pCloudGrid = nullptr;
-    // int **pPressureGrid = nullptr;
-
     while (true) {
-        for (int i = 0; i < 3; i++) {
-            std::cout << std::endl;
-        }
+        Utils::PrintNewlines(3);
 
         WeatherApp::PrintMainMenu();
 
-        const InputStatus inputStatus = WeatherApp::AwaitUserInput();
-        if (!inputStatus.status || std::cin.fail()) {
-            std::cin.clear();
+        const InputStatus inputStatus = WeatherApp::AwaitValidInput();
+        if (!inputStatus.status) {
             std::cout << "Please enter a single digit number from 1-9" << std::endl;
+            std::cin.ignore();
             continue;
         }
 
-        const ChoiceStatus choiceStatus = WeatherApp::GetChoiceStatus(inputStatus.userInput);
-        if (!choiceStatus.status) {
-            std::cout << "Please enter a single digit number from 1-9" << std::endl;
-            continue;
-        }
-
-        const OPTION userOption = static_cast<OPTION>(choiceStatus.choice);
+        const OPTION userOption = static_cast<OPTION>(inputStatus.userInput);
         if (userOption == OPTION::QUIT) {
             break;
         }
 
-        std::cout << "[ " << allOptions.at(userOption) << " ]" << std::endl
-                  << std::endl;
+        std::cout << "[ " << ALL_OPTIONS.at(userOption) << " ]";
+        Utils::PrintNewlines(2);
 
         if (userOption == OPTION::PROCESS_CONFIG_FILE) {
-            FileOperations::ProcessConfigFile("./data/config.txt");
+            DataLoader::LoadConfigFile("./data/config.txt");
         }
     }
 

@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,7 +27,7 @@ namespace Utils {
         return allTokens;
     }
 
-    bool StrContains(const std::string &str, const char subStr) {
+    bool StrContains(const std::string &str, const std::string &subStr) {
         return str.find(subStr) != std::string::npos;
     }
 
@@ -40,6 +41,27 @@ namespace Utils {
         for (const auto &val : vec) {
             std::cout << val << " | ";
         }
+    }
+
+    void PrintNewlines(const int numLines) {
+        for (int i = 0; i < numLines; i++) {
+            std::cout << std::endl;
+        }
+    }
+
+    ReadFileStatus ReadLinesFromFile(const std::string &filePath) {
+        std::ifstream inFile(filePath);
+        if (!inFile) {
+            return ReadFileStatus(false);
+        }
+
+        std::vector<std::string> allLines;
+        std::string line;
+        while (std::getline(inFile, line)) {
+            allLines.emplace_back(line);
+        }
+        inFile.close();
+        return ReadFileStatus(true, allLines);
     }
 } // namespace Utils
 

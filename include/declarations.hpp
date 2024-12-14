@@ -3,35 +3,59 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
-struct iVec2D {
+/*
+ * Generic Data Containers
+ */
+struct Pos2D {
     int x, y;
-    iVec2D(const int _x, const int _y) : x(_x), y(_y) {}
+    Pos2D(const int _x, const int _y) : x(_x), y(_y) {}
 };
 
 struct Grid {
-    iVec2D min;
+    const Pos2D min;
     const int width, height;
+    int **grid;
+};
+
+/*
+ * 'Status' return type declarations
+ *
+ * A common convention you will see used throughout the application is a function returning a SomeStatus
+ * These structs just bundle a 'bool status' with whatever is being returned - so that the caller can check the 'status' or 'success' of the return
+ */
+struct ReadFileStatus {
+    const bool status;
+    const std::vector<std::string> allLines;
+
+    ReadFileStatus(
+        const bool _status,
+        const std::vector<std::string> _allLines = {})
+        : status(_status), allLines(_allLines) {}
 };
 
 struct InputStatus {
     const bool status;
-    const std::string userInput;
+    const int userInput;
 
     InputStatus(
-        const bool _status, const std::string &_user_input = "")
-        : status(_status), userInput(_user_input) {}
+        const bool _status, const int _userInput = -1)
+        : status(_status), userInput(_userInput) {}
 };
 
 struct ChoiceStatus {
     const bool status;
-    const int choice;
+    const int choiceNum;
 
     ChoiceStatus(
-        const bool _status, const int _choice = -1)
-        : status(_status), choice(_choice) {}
+        const bool _status, const int _choiceNum = -1)
+        : status(_status), choiceNum(_choiceNum) {}
 };
 
+/*
+ * Miscellaneous
+ */
 enum class OPTION {
     PROCESS_CONFIG_FILE = 1,
     DISPLAY_CITY_MAP = 2,
@@ -43,7 +67,7 @@ enum class OPTION {
     QUIT = 8
 };
 
-const std::map<OPTION, std::string> allOptions{
+const std::map<OPTION, std::string> ALL_OPTIONS{
     {OPTION::PROCESS_CONFIG_FILE, "Read in and process a configuration file"},
     {OPTION::DISPLAY_CITY_MAP, "Display city map"},
     {OPTION::COVERAGE_MAP_IDX, "Display cloud coverage map (cloudiness index)"},
