@@ -10,21 +10,21 @@
 
 namespace DataLoader {
     /**
-     * @brief 'out' params are to be filled-in by the functions
-     * @return bool Success/status of loading the config file data
+     * @return The data from the config file, bundled into a struct
      */
-    bool LoadConfigFile(const std::string &filePath, std::map<GRID_TYPE, Grid> &outAllGrids) {
+    ConfigDataStatus GetConfigData(const std::string &filePath) {
         const ReadFileStatus configFileData = Utils::ReadLinesFromFile(filePath);
         if (!configFileData.status) {
             std::cout << "Error reading from file at: " << filePath << std::endl;
-            return false;
+            return ConfigDataStatus(false);
         }
 
+        auto configData = ConfigData();
         for (const std::string &line : configFileData.allLines) {
-            if (line.empty() || line.find("//") == 0) {
+            if (line.empty() || line.find("//") == 0) { // Ignore empty lines & comments
                 continue;
             }
-            if (Utils::StrContains(line, "=")) {
+            if (Utils::StrContains(line, "=")) { // Set the 'grid idx range'
                 const std::vector<std::string> data = Utils::StrSplit(line, '=');
                 const std::string axisKey = data[0];
 
@@ -33,35 +33,45 @@ namespace DataLoader {
                 const int rangeMax = std::stoi(gridRange[1]);
 
                 if (axisKey == "GridX_IdxRange") {
-                    for (auto grid : outAllGrids) {
-                        // grid.second.data = new int[rangeMax - rangeMin];
-                    }
-                } else {
+                    configData.minX = rangeMin;
+                    configData.maxX = rangeMax;
                 }
-            } else if (Utils::StrContains(line, "citylocation.txt")) {
+                else {
+                    configData.minY = rangeMin;
+                    configData.maxY = rangeMax;
+                }
+            } else if (Utils::StrContains(line, "citylocation.txt")) { // Set the 'city location' data 
                 const ReadFileStatus rawLocationData = Utils::ReadLinesFromFile(line);
-                if (!rawLocationData.status) { return false; }
-
-            } else if (Utils::StrContains(line, "cloudcover.txt")) {
+                if (!rawLocationData.status) { 
+                    return ConfigDataStatus(false); 
+                }
+                configData.cityLocations = rawLocationData.allLines;
+            } else if (Utils::StrContains(line, "cloudcover.txt")) { // Set the 'cloud coveragea' data
                 const ReadFileStatus rawCoverageData = Utils::ReadLinesFromFile(line);
-                if (!rawCoverageData.status) { return false; }
-            } else if (Utils::StrContains(line, "pressure.txt")) {
+                if (!rawCoverageData.status) { 
+                    return ConfigDataStatus(false); 
+                }
+                configData.cloudCover = rawCoverageData.allLines;
+            } else if (Utils::StrContains(line, "pressure.txt")) { // Set the 'pressure' data
                 const ReadFileStatus rawPressureData = Utils::ReadLinesFromFile(line);
-                if (!rawPressureData.status) { return false; }
+                if (!rawPressureData.status) { 
+                    return ConfigDataStatus(false); 
+                }
+                configData.pressure = rawPressureData.allLines;
             }
         }
-        return true;
+        return ConfigDataStatus(true, configData);
     }
 
-    int **LoadCityLocations(const std::vector<std::string> &rawLocationData) {
+    int **LoadCityLocations(const std::vector<std::string> &cityLocationData) {
         return nullptr;
     }
 
-    int **LoadCloudCover(const std::vector<std::string> &rawCoverageData) {
+    int **LoadCloudCover(const std::vector<std::string> &cloudCoverageData) {
         return nullptr;
     }
 
-    int **LoadPressureData(const std::vector<std::string> &rawPressureData) {
+    int **LoadPressureData(const std::vector<std::string> &pressureData) {
         return nullptr;
     }
 } // namespace DataLoader

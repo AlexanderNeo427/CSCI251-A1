@@ -27,10 +27,17 @@ namespace WeatherApp {
         return InputData(true, std::stoi(userInput));
     };
 
-    void HandleOption(const OPTION option, std::map<GRID_TYPE, Grid> &allGrids) {
+    /**
+     * @param refAllGrids Mutable reference to the grid data
+     */
+    GenericStatus HandleOption(const OPTION option, std::map<GRID_TYPE, Grid> &refAllGrids) {
         if (option == OPTION::PROCESS_CONFIG_FILE) {
-            DataLoader::LoadConfigFile("./data/config.txt");
+            ConfigDataStatus configDataStatus = DataLoader::GetConfigData("./data/config.txt");
+            if (!configDataStatus.status) {
+                return GenericStatus(false, "Error loading data from config file");
+            }
         }
+        return GenericStatus(false);
     }
 }; // namespace WeatherApp
 

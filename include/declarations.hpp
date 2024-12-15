@@ -8,11 +8,6 @@
 /*
  * Generic Data Containers
  */
-struct Pos2D {
-    int x, y;
-    Pos2D(const int _x, const int _y) : x(_x), y(_y) {}
-};
-
 enum class GRID_TYPE {
     CITY,
     COVERAGE,
@@ -20,34 +15,28 @@ enum class GRID_TYPE {
 };
 
 struct Grid {
-    const Pos2D min;
-    const int width, height;
     int **data;
+    const int posX, posY;
+    const int width, height;
 
-    Grid(const Pos2D _min, const int _width, const int _height)
-        : min(_min), width(_width), height(_height) {}
+    Grid(const int _posX, const int _posY, const int _width, const int _height)
+        : posX(_posX), posY(_posY), width(_width), height(_height) {}
 };
 
-struct Range {
-    const int min, max;
-    Range(const int _min, const int _max)
-        : min(_min), max(_max) {}
-};
+// struct Range {
+//     const int min, max;
+
+//     Range() : min(0), max(0) {}
+//     Range(const int _min, const int _max)
+//         : min(_min), max(_max) {}
+// };
 
 struct ConfigData {
-    const Range gridRangeX;
-    const Range gridRangeY;
-    const std::vector<std::string> cityLocations;
-    const std::vector<std::string> cloudCover;
-    const std::vector<std::string> pressure;
-
-    ConfigData(
-        const Range _gridRangeX, const Range _gridRangeY,
-        const std::vector<std::string> &_cityLocations,
-        const std::vector<std::string> &_cloudCover,
-        const std::vector<std::string> &_pressure)
-        : gridRangeX(_gridRangeX), gridRangeY(_gridRangeY),
-          cityLocations(_cityLocations), cloudCover(_cloudCover), pressure(_pressure) {}
+    int minX, maxX;
+    int minY, maxY;
+    std::vector<std::string> cityLocations;
+    std::vector<std::string> cloudCover;
+    std::vector<std::string> pressure;
 };
 
 /*
@@ -56,6 +45,14 @@ struct ConfigData {
  * A common convention you will see used throughout the application is a function returning a SomeStatus
  * These structs just bundle a 'bool status' with whatever is being returned - so that the caller can check the 'status' or 'success' of the return
  */
+struct GenericStatus {
+    const bool status;
+    const std::string message;
+
+    GenericStatus(const bool _status, const std::string &_message = "")
+        : status(_status), message(_message) {}
+};
+
 struct ReadFileStatus {
     const bool status;
     const std::vector<std::string> allLines;
@@ -66,12 +63,19 @@ struct ReadFileStatus {
         : status(_status), allLines(_allLines) {}
 };
 
+struct ConfigDataStatus {
+    const bool status;
+    const ConfigData configData;
+
+    ConfigDataStatus(const bool _status, const ConfigData &_configData = {})
+        : status(_status), configData(_configData) {}
+};
+
 struct InputData {
     const bool isValid;
     const int numChoice;
 
-    InputData(
-        const bool _isValid, const int _numChoice = -1)
+    InputData(const bool _isValid, const int _numChoice = -1)
         : isValid(_isValid), numChoice(_numChoice) {}
 };
 

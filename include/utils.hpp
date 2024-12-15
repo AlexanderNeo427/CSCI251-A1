@@ -31,10 +31,10 @@ namespace Utils {
         return str.find(subStr) != std::string::npos;
     }
 
-    bool StrEndsWith(const std::string &str, const std::string &suffix) {
-        return str.length() > suffix.length() &&
-               str.compare(str.length() - suffix.length(), suffix.length(), suffix);
-    }
+    // bool StrEndsWith(const std::string &str, const std::string &suffix) {
+    //     return str.length() > suffix.length() &&
+    //            str.compare(str.length() - suffix.length(), suffix.length(), suffix);
+    // }
 
     // template <typename T>
     // void PrintVector(const std::vector<T> &vec) {

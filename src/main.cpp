@@ -2,11 +2,9 @@
 #include <iostream>
 #include <map>
 
-std::map<GRID_TYPE, Grid> g_allGrids;
-
 int main() {
-    bool isRunning = true;
-    while (isRunning) {
+    std::map<GRID_TYPE, Grid> allGrids;
+    while (true) {
         Utils::PrintNewlines(3);
         WeatherApp::PrintMainMenu();
 
@@ -18,14 +16,27 @@ int main() {
         }
 
         const OPTION userOption = static_cast<OPTION>(inputData.numChoice);
-        if (userOption == OPTION::QUIT) { break; }
+        if (userOption == OPTION::QUIT) {
+            break;
+        }
         std::cout << "[ " << ALL_OPTIONS.at(userOption) << " ]";
         Utils::PrintNewlines(2);
 
-        WeatherApp::HandleOption(userOption, g_allGrids);
+        const GenericStatus handleOptionStatus = WeatherApp::HandleOption(userOption, allGrids);
+        if (!handleOptionStatus.status) {
+            std::cout << handleOptionStatus.message << std::endl;
+            continue;
+        }
     }
 
-    // TODO: De-allocate memory
+    // Cleanup
+    for (const std::pair<const GRID_TYPE, Grid> &grid : allGrids) {
+        const Grid gridData = grid.second;
+        for (int x = 0; x < gridData.width; x++) {
+            delete[] gridData.data[x];
+        }
+        delete[] gridData.data;
+    }
 
     return EXIT_SUCCESS;
 };
