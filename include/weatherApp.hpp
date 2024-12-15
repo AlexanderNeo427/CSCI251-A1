@@ -10,11 +10,13 @@ namespace WeatherApp {
         std::cout << "Student ID: 9085610" << std::endl;
         std::cout << "Student Name: Alexander Neo" << std::endl;
         std::cout << "-------------------------" << std::endl;
-        std::cout << "Welcome to Weather Information Processing System!" << std::endl << std::endl;
+        std::cout << "Welcome to Weather Information Processing System!" << std::endl
+                  << std::endl;
         for (const std::pair<OPTION, std::string> op : ALL_OPTIONS) {
             std::cout << static_cast<int>(op.first) << ")    " << op.second << std::endl;
         }
-        std::cout << std::endl << "Please enter your choice: ";
+        std::cout << std::endl
+                  << "Please enter your choice: ";
     };
 
     InputData AwaitUserInput() {
@@ -39,6 +41,7 @@ namespace WeatherApp {
         }
         return GenericStatus(false);
     }
+
 }; // namespace WeatherApp
 
 #endif

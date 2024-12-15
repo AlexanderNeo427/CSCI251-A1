@@ -63,9 +63,14 @@ namespace DataLoader {
         return ConfigDataStatus(true, configData);
     }
 
-    int **LoadCityLocations(const std::vector<std::string> &cityLocationData) {
-        return nullptr;
-    }
+    // Grid LoadCityLocations(const std::vector<std::string> &cityLocationData) {
+    //     for (const std::string& datum : cityLocationData) {
+    //         const std::vector<std::string> splitData = Utils::StrSplit(datum, '-');
+    //         const std::vector<std::string> locationData = Utils::StrSplit(datum, ',');
+
+    //     }
+    //     return Grid();
+    // }
 
     int **LoadCloudCover(const std::vector<std::string> &cloudCoverageData) {
         return nullptr;
