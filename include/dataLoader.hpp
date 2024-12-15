@@ -13,15 +13,14 @@ namespace DataLoader {
      * @brief 'out' params are to be filled-in by the functions
      * @return bool Success/status of loading the config file data
      */
-    bool LoadConfigFile(const std::string &filePath) {
-
+    bool LoadConfigFile(const std::string &filePath, std::map<GRID_TYPE, Grid> &outAllGrids) {
         const ReadFileStatus configFileData = Utils::ReadLinesFromFile(filePath);
         if (!configFileData.status) {
             std::cout << "Error reading from file at: " << filePath << std::endl;
             return false;
         }
 
-        for (std::string line : configFileData.allLines) {
+        for (const std::string &line : configFileData.allLines) {
             if (line.empty() || line.find("//") == 0) {
                 continue;
             }
@@ -33,26 +32,22 @@ namespace DataLoader {
                 const int rangeMin = std::stoi(gridRange[0]);
                 const int rangeMax = std::stoi(gridRange[1]);
 
-                if (axisKey == "GridIdxRange") {
-
+                if (axisKey == "GridX_IdxRange") {
+                    for (auto grid : outAllGrids) {
+                        // grid.second.data = new int[rangeMax - rangeMin];
+                    }
                 } else {
                 }
             } else if (Utils::StrContains(line, "citylocation.txt")) {
                 const ReadFileStatus rawLocationData = Utils::ReadLinesFromFile(line);
-                if (!rawLocationData.status) {
-                    return false;
-                }
+                if (!rawLocationData.status) { return false; }
 
             } else if (Utils::StrContains(line, "cloudcover.txt")) {
                 const ReadFileStatus rawCoverageData = Utils::ReadLinesFromFile(line);
-                if (!rawCoverageData.status) {
-                    return false;
-                }
+                if (!rawCoverageData.status) { return false; }
             } else if (Utils::StrContains(line, "pressure.txt")) {
                 const ReadFileStatus rawPressureData = Utils::ReadLinesFromFile(line);
-                if (!rawPressureData.status) {
-                    return false;
-                }
+                if (!rawPressureData.status) { return false; }
             }
         }
         return true;

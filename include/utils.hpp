@@ -36,12 +36,12 @@ namespace Utils {
                str.compare(str.length() - suffix.length(), suffix.length(), suffix);
     }
 
-    template <typename T>
-    void PrintVector(const std::vector<T> &vec) {
-        for (const auto &val : vec) {
-            std::cout << val << " | ";
-        }
-    }
+    // template <typename T>
+    // void PrintVector(const std::vector<T> &vec) {
+    //     for (const auto &val : vec) {
+    //         std::cout << val << " | ";
+    //     }
+    // }
 
     void PrintNewlines(const int numLines) {
         for (int i = 0; i < numLines; i++) {

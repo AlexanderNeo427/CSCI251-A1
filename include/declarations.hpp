@@ -13,10 +13,41 @@ struct Pos2D {
     Pos2D(const int _x, const int _y) : x(_x), y(_y) {}
 };
 
+enum class GRID_TYPE {
+    CITY,
+    COVERAGE,
+    PRESSURE
+};
+
 struct Grid {
     const Pos2D min;
     const int width, height;
-    int **grid;
+    int **data;
+
+    Grid(const Pos2D _min, const int _width, const int _height)
+        : min(_min), width(_width), height(_height) {}
+};
+
+struct Range {
+    const int min, max;
+    Range(const int _min, const int _max)
+        : min(_min), max(_max) {}
+};
+
+struct ConfigData {
+    const Range gridRangeX;
+    const Range gridRangeY;
+    const std::vector<std::string> cityLocations;
+    const std::vector<std::string> cloudCover;
+    const std::vector<std::string> pressure;
+
+    ConfigData(
+        const Range _gridRangeX, const Range _gridRangeY,
+        const std::vector<std::string> &_cityLocations,
+        const std::vector<std::string> &_cloudCover,
+        const std::vector<std::string> &_pressure)
+        : gridRangeX(_gridRangeX), gridRangeY(_gridRangeY),
+          cityLocations(_cityLocations), cloudCover(_cloudCover), pressure(_pressure) {}
 };
 
 /*
@@ -35,22 +66,13 @@ struct ReadFileStatus {
         : status(_status), allLines(_allLines) {}
 };
 
-struct InputStatus {
-    const bool status;
-    const int userInput;
+struct InputData {
+    const bool isValid;
+    const int numChoice;
 
-    InputStatus(
-        const bool _status, const int _userInput = -1)
-        : status(_status), userInput(_userInput) {}
-};
-
-struct ChoiceStatus {
-    const bool status;
-    const int choiceNum;
-
-    ChoiceStatus(
-        const bool _status, const int _choiceNum = -1)
-        : status(_status), choiceNum(_choiceNum) {}
+    InputData(
+        const bool _isValid, const int _numChoice = -1)
+        : isValid(_isValid), numChoice(_numChoice) {}
 };
 
 /*
