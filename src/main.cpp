@@ -3,7 +3,7 @@
 #include <map>
 
 int main() {
-    std::map<GRID_TYPE, Grid> allGrids;
+    std::map<GRID_TYPE, GridData> allGrids;
     while (true) {
         Utils::PrintNewlines(3);
         WeatherApp::PrintMainMenu();
@@ -30,13 +30,12 @@ int main() {
     }
 
     // Cleanup
-    for (const std::pair<const GRID_TYPE, Grid> &grid : allGrids) {
-        const Grid gridData = grid.second;
-        for (int x = 0; x < gridData.width; x++) {
-            delete[] gridData.data[x];
+    for (const std::pair<const GRID_TYPE, GridData> &grid : allGrids) {
+        const GridData data = grid.second;
+        for (int x = 0; x < (data.rangeX.max - data.rangeX.min) + 1; x++) {
+            delete[] data.arr[x];
         }
-        delete[] gridData.data;
+        delete[] data.arr;
     }
-
     return EXIT_SUCCESS;
 };

@@ -31,18 +31,6 @@ namespace Utils {
         return str.find(subStr) != std::string::npos;
     }
 
-    // bool StrEndsWith(const std::string &str, const std::string &suffix) {
-    //     return str.length() > suffix.length() &&
-    //            str.compare(str.length() - suffix.length(), suffix.length(), suffix);
-    // }
-
-    // template <typename T>
-    // void PrintVector(const std::vector<T> &vec) {
-    //     for (const auto &val : vec) {
-    //         std::cout << val << " | ";
-    //     }
-    // }
-
     void PrintNewlines(const int numLines) {
         for (int i = 0; i < numLines; i++) {
             std::cout << std::endl;

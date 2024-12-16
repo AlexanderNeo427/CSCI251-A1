@@ -14,29 +14,19 @@ enum class GRID_TYPE {
     PRESSURE
 };
 
-struct Grid {
-    int **data;
-    const int posX, posY;
-    const int width, height;
-
-    Grid(const int _posX, const int _posY, const int _width, const int _height)
-        : posX(_posX), posY(_posY), width(_width), height(_height) {}
+struct Range {
+    int min, max;
 };
 
-// struct Range {
-//     const int min, max;
-
-//     Range() : min(0), max(0) {}
-//     Range(const int _min, const int _max)
-//         : min(_min), max(_max) {}
-// };
+struct GridData {
+    int **arr;
+    Range rangeX, rangeY;
+    // int minX, maxX, minY, maxY;
+};
 
 struct ConfigData {
-    int minX, maxX;
-    int minY, maxY;
-    std::vector<std::string> cityLocations;
-    std::vector<std::string> cloudCover;
-    std::vector<std::string> pressure;
+    Range rangeX, rangeY;
+    std::vector<std::string> cityLocationEntries, coverageEntries, pressureEntries;
 };
 
 /*
