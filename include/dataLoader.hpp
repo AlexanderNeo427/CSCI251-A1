@@ -3,6 +3,7 @@
 
 #include "declarations.hpp"
 #include "utils.hpp"
+#include "renderer.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -94,14 +95,16 @@ namespace DataLoader {
             grid.arr[posX][posY] = cityType;
         }
 
-        std::cout << "Print grid to validate....";
-        Utils::PrintNewlines(3);
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                std::cout << grid.arr[x][y];
-            }
-            std::cout << std::endl;
-        }
+        std::cout << "Printing le grid" << std::endl;
+        Renderer::RenderGrid(grid); 
+        // std::cout << "Print grid to validate....";
+        // Utils::PrintNewlines(3);
+        // for (int x = 0; x < width; x++) {
+        //     for (int y = 0; y < height; y++) {
+        //         std::cout << grid.arr[x][y];
+        //     }
+        //     std::cout << std::endl;
+        // }
         return grid;
     }
 
