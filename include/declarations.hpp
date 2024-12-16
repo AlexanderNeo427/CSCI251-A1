@@ -8,6 +8,12 @@
 /*
  * Generic Data Containers
  */
+enum class RENDER_MODE {
+    CITY,
+    INDEX,
+    LMH,
+};
+
 enum class GRID_TYPE {
     CITY,
     COVERAGE,
@@ -21,7 +27,6 @@ struct Range {
 struct GridData {
     int **arr;
     Range rangeX, rangeY;
-    // int minX, maxX, minY, maxY;
 };
 
 struct ConfigData {

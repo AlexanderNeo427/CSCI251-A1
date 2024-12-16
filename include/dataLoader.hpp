@@ -2,8 +2,8 @@
 #define DATA_LOADER_H
 
 #include "declarations.hpp"
-#include "utils.hpp"
 #include "renderer.hpp"
+#include "utils.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -82,7 +82,7 @@ namespace DataLoader {
         }
 
         for (const std::string &datum : cityLocationData) { // (e.g datum = [3, 5]-3-Big_City)
-            const std::vector<std::string> splitData = Utils::StrSplit(datum, '-');
+            const std::vector<std::string> &splitData = Utils::StrSplit(datum, '-');
             const int cityType = std::stoi(splitData[1]);
 
             std::string locStr = splitData[0];              // Extract location info (e.g [23, 9])
@@ -90,31 +90,43 @@ namespace DataLoader {
             const std::vector<std::string> locData = Utils::StrSplit(locStr, ',');
             const int posX = std::stoi(locData[0]);
             const int posY = std::stoi(locData[1]);
-            std::cout << "City Type: " <<  cityType << std::endl;
-            std::cout << "Pos: " << posX << ", " << posY << std::endl << std::endl;
             grid.arr[posX][posY] = cityType;
         }
-
-        std::cout << "Printing le grid" << std::endl;
-        Renderer::RenderGrid(grid); 
-        // std::cout << "Print grid to validate....";
-        // Utils::PrintNewlines(3);
-        // for (int x = 0; x < width; x++) {
-        //     for (int y = 0; y < height; y++) {
-        //         std::cout << grid.arr[x][y];
-        //     }
-        //     std::cout << std::endl;
-        // }
         return grid;
     }
 
-    // Grid LoadCloudCover(const std::vector<std::string> &cloudCoverageData) {
-    //     return nullptr;
-    // }
-    //
-    // int **LoadPressureData(const std::vector<std::string> &pressureData) {
-    //     return nullptr;
-    // }
+    GridData LoadGenericData(const std::vector<std::string> &genericData, const ConfigData &cfg) {
+        const int width = (cfg.rangeX.max - cfg.rangeX.min) + 1;
+        const int height = (cfg.rangeY.max - cfg.rangeY.min) + 1;
+
+        auto grid = GridData();
+        grid.rangeX.min = cfg.rangeX.min;
+        grid.rangeX.max = cfg.rangeX.max;
+        grid.rangeY.min = cfg.rangeY.min;
+        grid.rangeY.max = cfg.rangeY.max;
+
+        grid.arr = new int *[width];
+        for (int x = 0; x < width; x++) {
+            grid.arr[x] = new int[height];
+            for (int y = 0; y < height; y++) {
+                grid.arr[x][y] = 0;
+            }
+        }
+
+        for (const std::string &datum : genericData) { // Example Datum: [7, 4]-34
+            const std::vector<std::string> &splitData = Utils::StrSplit(datum, '-');
+
+            std::string locStr = splitData[0];              // Extract location info (e.g [23, 9])
+            locStr = locStr.substr(1, locStr.length() - 2); // Remove the '[' and ']' chars
+            const std::vector<std::string> locData = Utils::StrSplit(locStr, ',');
+            const int posX = std::stoi(locData[0]);
+            const int posY = std::stoi(locData[1]);
+            const int indexValue = std::stoi(splitData[1]);
+
+            grid.arr[posX][posY] = indexValue;
+        }
+        return grid;
+    }
 } // namespace DataLoader
 
 #endif

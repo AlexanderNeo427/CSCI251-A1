@@ -31,11 +31,13 @@ int main() {
 
     // Cleanup
     for (const std::pair<const GRID_TYPE, GridData> &grid : allGrids) {
-        const GridData data = grid.second;
+        GridData data = grid.second;
         for (int x = 0; x < (data.rangeX.max - data.rangeX.min) + 1; x++) {
             delete[] data.arr[x];
+            data.arr[x] = nullptr;
         }
         delete[] data.arr;
+        data.arr = nullptr;
     }
     return EXIT_SUCCESS;
 };

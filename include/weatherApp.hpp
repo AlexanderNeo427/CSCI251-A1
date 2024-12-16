@@ -10,11 +10,13 @@ namespace WeatherApp {
         std::cout << "Student ID: 9085610" << std::endl;
         std::cout << "Student Name: Alexander Neo" << std::endl;
         std::cout << "-------------------------" << std::endl;
-        std::cout << "Welcome to Weather Information Processing System!" << std::endl << std::endl;
+        std::cout << "Welcome to Weather Information Processing System!" << std::endl
+                  << std::endl;
         for (const std::pair<OPTION, std::string> op : ALL_OPTIONS) {
             std::cout << static_cast<int>(op.first) << ")    " << op.second << std::endl;
         }
-        std::cout << std::endl << "Please enter your choice: ";
+        std::cout << std::endl
+                  << "Please enter your choice: ";
     };
 
     InputData AwaitUserInput() {
@@ -36,20 +38,22 @@ namespace WeatherApp {
             if (!configDataStatus.status) {
                 return GenericStatus(false, "Error loading data from config file");
             }
-            const ConfigData& cfg = configDataStatus.configData;
-
+            const ConfigData &cfg = configDataStatus.configData;
             refAllGrids[GRID_TYPE::CITY] = DataLoader::LoadCityLocations(cfg.cityLocationEntries, cfg);
-            
-            // const GridData &cityGrid = refAllGrids[GRID_TYPE::CITY];
-            // const int width = (cityGrid.rangeX.max - cityGrid.rangeX.min) + 1;
-            // const int height = (cityGrid.rangeY.max - cityGrid.rangeY.min) + 1;
-            // std::cout << "WH: " << width << ", " << height << std::endl;
-            // for (int x = 0; x < width; x++) {
-            //     for (int y = 0; y < height; y++) {
-            //         std::cout << cityGrid.arr[x][y] << " SEP ";
-            //     }
-            //     std::cout << std::endl;
-            // }
+            refAllGrids[GRID_TYPE::COVERAGE] = DataLoader::LoadGenericData(cfg.coverageEntries, cfg);
+            refAllGrids[GRID_TYPE::PRESSURE] = DataLoader::LoadGenericData(cfg.pressureEntries, cfg);
+        } else if (option == OPTION::DISPLAY_CITY_MAP) {
+            Renderer::RenderGrid(refAllGrids[GRID_TYPE::CITY], RENDER_MODE::CITY);
+        } else if (option == OPTION::COVERAGE_MAP_IDX) {
+            Renderer::RenderGrid(refAllGrids[GRID_TYPE::COVERAGE], RENDER_MODE::INDEX);
+        } else if (option == OPTION::COVERAGE_MAP_LMH) {
+            Renderer::RenderGrid(refAllGrids[GRID_TYPE::COVERAGE], RENDER_MODE::LMH);
+        } else if (option == OPTION::ATMOS_PRESSURE_IDX) {
+            Renderer::RenderGrid(refAllGrids[GRID_TYPE::PRESSURE], RENDER_MODE::INDEX);
+        } else if (option == OPTION::ATMOS_PRESSURE_LMH) {
+            Renderer::RenderGrid(refAllGrids[GRID_TYPE::PRESSURE], RENDER_MODE::LMH);
+        } else if (option == OPTION::SUMMARY_REPORT) {
+            std::cout << "TODO: Print the summary report" << std::endl;
         }
         return GenericStatus(false);
     }
