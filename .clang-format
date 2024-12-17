@@ -8,3 +8,4 @@ AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
 BreakBeforeBraces: Attach
 NamespaceIndentation: All
+IndentCaseLabels: true

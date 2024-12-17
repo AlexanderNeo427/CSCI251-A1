@@ -2,7 +2,6 @@
 #define DATA_LOADER_H
 
 #include "declarations.hpp"
-#include "renderer.hpp"
 #include "utils.hpp"
 #include <fstream>
 #include <iostream>

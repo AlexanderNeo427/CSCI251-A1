@@ -7,6 +7,14 @@
 #include <vector>
 
 namespace Utils {
+    template <typename T>
+    void PaddedPrint(const T val) {
+        std::cout << val;
+        for (int i = 0; i < 2; i++) {
+            std::cout << " ";
+        }
+    }
+
     std::vector<std::string> StrSplit(const std::string &str, const char delimiter) {
         std::vector<std::string> allTokens;
         std::string token;
