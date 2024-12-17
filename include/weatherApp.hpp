@@ -41,7 +41,7 @@ namespace WeatherApp {
         }
         std::cout << std::endl;
 
-        // Content + middle borders
+        // Content | Middle borders | Y coordinates
         for (int y = contentHeight - 1; y >= 0; y--) {
             std::cout << y << " # ";
             if (renderMode == RENDER_MODE::CITY) {
@@ -79,6 +79,7 @@ namespace WeatherApp {
         }
         std::cout << std::endl;
 
+        // X coordinates
         std::cout << "    ";
         for (int i = 0; i < contentWidth; i++) {
             std::cout << i << " ";
@@ -92,7 +93,7 @@ namespace WeatherApp {
     GenericStatus HandleOption(
         const OPTION option,
         std::map<GRID_TYPE, GridData> &refAllGrids,
-        std::map<int, std::string> &refCityLookupTable) {
+        std::map<CityID, std::string> &refCityLookupTable) {
 
         switch (option) {
             case OPTION::PROCESS_CONFIG_FILE: {

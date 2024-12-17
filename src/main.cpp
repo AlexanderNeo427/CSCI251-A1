@@ -4,10 +4,10 @@
 
 int main() {
     std::map<GRID_TYPE, GridData> allGrids;
-    std::map<int, std::string> cityLookupTable;
+    std::map<CityID, std::string> cityLookupTable;
 
     while (true) {
-        Utils::PrintNewlines(3);
+        Utils::PrintNewlines(2);
         WeatherApp::PrintMainMenu();
 
         const InputData inputData = WeatherApp::AwaitUserInput();
@@ -21,6 +21,7 @@ int main() {
         if (userOption == OPTION::QUIT) {
             break;
         }
+
         std::cout << "[ " << ALL_OPTIONS.at(userOption) << " ]";
         Utils::PrintNewlines(2);
 

@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+using CityID = int;
+
 /*
  * Generic Data Containers
  */
@@ -26,6 +28,8 @@ struct Range {
 
 struct Pos2D {
     int x, y;
+    Pos2D(): x(0), y(0) {}
+    Pos2D(const int _x, const int _y) : x(_x), y(_y) {}
 };
 
 struct GridData {
