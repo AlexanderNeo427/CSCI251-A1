@@ -24,6 +24,10 @@ struct Range {
     int min, max;
 };
 
+struct Pos2D {
+    int x, y;
+};
+
 struct GridData {
     int **arr;
     Range rangeX, rangeY;

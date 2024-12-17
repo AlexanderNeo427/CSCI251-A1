@@ -4,6 +4,8 @@
 
 int main() {
     std::map<GRID_TYPE, GridData> allGrids;
+    std::map<int, std::string> cityLookupTable;
+
     while (true) {
         Utils::PrintNewlines(3);
         WeatherApp::PrintMainMenu();
@@ -22,7 +24,7 @@ int main() {
         std::cout << "[ " << ALL_OPTIONS.at(userOption) << " ]";
         Utils::PrintNewlines(2);
 
-        const GenericStatus handleOptionStatus = WeatherApp::HandleOption(userOption, allGrids);
+        const GenericStatus handleOptionStatus = WeatherApp::HandleOption(userOption, allGrids, cityLookupTable);
         if (!handleOptionStatus.status) {
             std::cout << handleOptionStatus.message << std::endl;
             continue;

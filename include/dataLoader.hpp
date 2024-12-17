@@ -62,7 +62,11 @@ namespace DataLoader {
         return ConfigDataStatus(true, configData);
     }
 
-    GridData LoadCityLocations(const std::vector<std::string> &cityLocationData, const ConfigData &cfg) {
+    GridData LoadCityLocations(
+        const std::vector<std::string> &cityLocationData,
+        const ConfigData &cfg,
+        std::map<int, std::string> &refCityLookupTable) {
+
         const int width = (cfg.rangeX.max - cfg.rangeX.min) + 1;
         const int height = (cfg.rangeY.max - cfg.rangeY.min) + 1;
 
@@ -90,6 +94,9 @@ namespace DataLoader {
             const int posX = std::stoi(locData[0]);
             const int posY = std::stoi(locData[1]);
             grid.arr[posX][posY] = cityType;
+
+            const std::string &cityName = splitData[2];
+            refCityLookupTable[cityType] = cityName;
         }
         return grid;
     }

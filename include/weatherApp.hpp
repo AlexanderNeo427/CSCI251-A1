@@ -11,13 +11,11 @@ namespace WeatherApp {
         std::cout << "Student ID: 9085610" << std::endl;
         std::cout << "Student Name: Alexander Neo" << std::endl;
         std::cout << "-------------------------" << std::endl;
-        std::cout << "Welcome to Weather Information Processing System!" << std::endl
-                  << std::endl;
+        std::cout << "Welcome to Weather Information Processing System!" << std::endl << std::endl;
         for (const std::pair<OPTION, std::string> op : ALL_OPTIONS) {
             std::cout << static_cast<int>(op.first) << ")    " << op.second << std::endl;
         }
-        std::cout << std::endl
-                  << "Please enter your choice: ";
+        std::cout << std::endl << "Please enter your choice: ";
     };
 
     InputData AwaitUserInput() {
@@ -29,6 +27,8 @@ namespace WeatherApp {
         }
         return InputData(true, std::stoi(userInput));
     };
+
+    void AwaitEnterInput() {}
 
     void RenderGrid(const GridData &gridData, const RENDER_MODE renderMode) {
         const int contentWidth = (gridData.rangeX.max - gridData.rangeX.min) + 1;
@@ -89,7 +89,11 @@ namespace WeatherApp {
     /**
      * @param refAllGrids Mutable reference to the grid data
      */
-    GenericStatus HandleOption(const OPTION option, std::map<GRID_TYPE, GridData> &refAllGrids) {
+    GenericStatus HandleOption(
+        const OPTION option,
+        std::map<GRID_TYPE, GridData> &refAllGrids,
+        std::map<int, std::string> &refCityLookupTable) {
+
         switch (option) {
             case OPTION::PROCESS_CONFIG_FILE: {
                 const ConfigDataStatus configDataStatus = DataLoader::GetConfigData("./data/config.txt");
@@ -97,7 +101,7 @@ namespace WeatherApp {
                     return GenericStatus(false, "Error loading data from config file");
                 }
                 const ConfigData &cfg = configDataStatus.configData;
-                refAllGrids[GRID_TYPE::CITY] = DataLoader::LoadCityLocations(cfg.cityLocationEntries, cfg);
+                refAllGrids[GRID_TYPE::CITY] = DataLoader::LoadCityLocations(cfg.cityLocationEntries, cfg, refCityLookupTable);
                 refAllGrids[GRID_TYPE::COVERAGE] = DataLoader::LoadGenericData(cfg.coverageEntries, cfg);
                 refAllGrids[GRID_TYPE::PRESSURE] = DataLoader::LoadGenericData(cfg.pressureEntries, cfg);
                 break;
