@@ -28,16 +28,15 @@ struct Vec2D {
     Vec2D() : x(0), y(0) {}
     Vec2D(const int _x, const int _y) : x(_x), y(_y) {}
 
-    bool operator<(const Vec2D &rhs) const {
-        if (x != rhs.x) {
-            return x < rhs.x;
-        }
-        return y < rhs.y;
-    }
-
     bool operator==(const Vec2D &rhs) const {
         return x == rhs.x && y == rhs.y;
     }
+
+    struct Hash {
+        std::size_t operator()(const Vec2D &vec) const {
+            return std::hash<int>()(vec.x) ^ (std::hash<int>()(vec.y) << 1);
+        }
+    };
 };
 
 struct GridData {
@@ -116,13 +115,13 @@ const std::map<OPTION, std::string> ALL_OPTIONS{
 };
 
 const std::vector<Vec2D> ALL_DIRECTIONS{
-    Vec2D(-1, -1), // Bottom-left
+    Vec2D(-1, -1), // Bottom-Left
     Vec2D(-1, 0),  // Left
-    Vec2D(-1, 1),  // Top-left
+    Vec2D(-1, 1),  // Left-Top
     Vec2D(0, 1),   // Top
-    Vec2D(1, 1),   // Top-right
-    Vec2D(0, 1),   // Right
-    Vec2D(-1, 1),  // Bottom-right
+    Vec2D(1, 1),   // Right-Top
+    Vec2D(1, 0),   // Right
+    Vec2D(1, -1),  // Right-Bottom
     Vec2D(0, -1),  // Bottom
 };
 

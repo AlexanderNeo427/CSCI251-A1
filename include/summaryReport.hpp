@@ -3,25 +3,20 @@
 
 #include "declarations.hpp"
 #include "utils.hpp"
-#include <algorithm>
 #include <iostream>
 
 namespace SummaryReport {
-    std::vector<Vec2D> WithSurroundingGridArea(const std::vector<Vec2D> &positionVec, const Vec2D &bottomLeft, const Vec2D &topRight) {
-        std::cout << "Calc surround grid area, boundaries: " << std::endl;
-        std::cout << "Min: " << bottomLeft.x << ", " << bottomLeft.y << std::endl;
-        std::cout << "Max: " << topRight.x << ", " << topRight.y << std::endl;
-
-        std::set<Vec2D> positionSet = Utils::VectorToSet(positionVec);
-        for (const Vec2D &pos : positionVec) {
+    std::vector<Vec2D> WithSurroundingGridArea(const std::vector<Vec2D> &posVec, const Vec2D &bottomLeft, const Vec2D &topRight) {
+        std::unordered_set<Vec2D, Vec2D::Hash> posSet = Utils::VectorToSet(posVec);
+        for (const Vec2D &pos : posVec) {
             for (const Vec2D &dir : ALL_DIRECTIONS) {
                 auto nextPos = Vec2D(pos.x + dir.x, pos.y + dir.y);
                 nextPos.x = std::max(bottomLeft.x, std::min(topRight.x, nextPos.x));
                 nextPos.y = std::max(bottomLeft.y, std::min(topRight.y, nextPos.y));
-                positionSet.insert(nextPos);
+                posSet.insert(nextPos);
             }
         }
-        return Utils::SetToVector(positionSet);
+        return Utils::SetToVector(posSet);
     }
 
     float ComputeGridAverage(const GridData &gridData, const std::vector<Vec2D> &positions) {
@@ -90,11 +85,11 @@ namespace SummaryReport {
             }
         } else if (avgPressureLMH == 'M') {
             if (avgCoverageLMH == 'H') {
-                return 50;
+                return 60;
             } else if (avgCoverageLMH == 'M') {
-                return 40;
+                return 50;
             } else if (avgCoverageLMH == 'L') {
-                return 30;
+                return 40;
             }
         } else if (avgPressureLMH == 'H') {
             if (avgCoverageLMH == 'H') {
@@ -130,55 +125,31 @@ namespace SummaryReport {
         const GridData &cityGridData = allGrids.at(GRID_TYPE::CITY);
         const std::map<CityID, std::vector<Vec2D>> allCityPositions = GetAllCityPositions(cityGridData);
 
-        std::set<Vec2D> mySet;
-        mySet.insert(Vec2D(1, 2));
-        mySet.insert(Vec2D(1, 2));
-        mySet.insert(Vec2D(2, 1));
-        mySet.insert(Vec2D(3, 1));
-        for (const auto &pos : mySet) {
-            std::cout << pos.x << ", " << pos.y << std::endl;
+        for (const auto &data : allCityPositions) {
+            const CityID cityID = data.first;
+            const std::vector<Vec2D> &cityPositions = data.second;
+            const std::vector<Vec2D> &positionsToAggregate = WithSurroundingGridArea(
+                cityPositions, cityGridData.bottomLeft, cityGridData.topRight
+            );
+
+            const GridData &cloudCoverageGrid = allGrids.at(GRID_TYPE::COVERAGE);
+            const float avgCloudCover = ComputeGridAverage(cloudCoverageGrid, positionsToAggregate);
+            const char coverageLMH = Utils::GetLMH(avgCloudCover);
+
+            const GridData &atmosPressureGrid = allGrids.at(GRID_TYPE::PRESSURE);
+            const float avgPressure = ComputeGridAverage(atmosPressureGrid, positionsToAggregate);
+            const char pressureLMH = Utils::GetLMH(avgPressure);
+
+            const int rainProbability = ComputeRainProbability(pressureLMH, coverageLMH);
+
+            std::cout << "City Name: " << cityLookupTable.at(cityID) << std::endl;
+            std::cout << "City ID: " << cityID << std::endl;
+            std::cout << "Ave. Cloud Cover (ACC): " << avgCloudCover << " (" << coverageLMH << ")" << std::endl;
+            std::cout << "Ave. Pressure (AP): " << avgPressure << " (" << pressureLMH << ")" << std::endl;
+            std::cout << "Probability of Rain (%): " << std::to_string(rainProbability) << ".00" << std::endl;
+            PrintAscii(pressureLMH, coverageLMH);
+            std::cout << std::endl;
         }
-
-        // for (const auto &data : allCityPositions) {
-        //     const CityID cityID = data.first;
-        //     const std::vector<Vec2D> &cityPositions = data.second;
-        //     const std::vector<Vec2D> &positionsToAggregate = WithSurroundingGridArea(
-        //         cityPositions, cityGridData.bottomLeft, cityGridData.topRight);
-
-        //     // DEBUG
-        //     // std::cout << "City ID: " << cityID << std::endl;
-        //     // std::cout << "City Name: " << cityLookupTable.at(cityID) << std::endl
-        //     //           << std::endl;
-
-        //     // std::cout << "City Positions: " << std::endl;
-        //     // for (const Vec2D &pos : cityPositions) {
-        //     //     std::cout << pos.x << ", " << pos.y << std::endl;
-        //     // }
-        //     // std::cout << "==================" << std::endl;
-
-        //     // std::cout << "Positions to aggregate: " << std::endl;
-        //     // for (const Vec2D &pos : positionsToAggregate) {
-        //     //     std::cout << pos.x << ", " << pos.y << std::endl;
-        //     // }
-
-        //     // const GridData &cloudCoverageGrid = allGrids.at(GRID_TYPE::COVERAGE);
-        //     // const float avgCloudCover = ComputeGridAverage(cloudCoverageGrid, positionsToAggregate);
-        //     // const char coverageLMH = Utils::GetLMH(avgCloudCover);
-
-        //     // const GridData &atmosPressureGrid = allGrids.at(GRID_TYPE::PRESSURE);
-        //     // const float avgPressure = ComputeGridAverage(atmosPressureGrid, positionsToAggregate);
-        //     // const char pressureLMH = Utils::GetLMH(avgPressure);
-
-        //     // const int rainProbability = ComputeRainProbability(pressureLMH, coverageLMH);
-
-        //     // std::cout << "City Name: " << cityLookupTable.at(cityID) << std::endl;
-        //     // std::cout << "City ID: " << cityID << std::endl;
-        //     // std::cout << "Ave. Cloud Cover (ACC): " << avgCloudCover << "(" << coverageLMH << ")" << std::endl;
-        //     // std::cout << "Ave. Pressure (AP): " << avgPressure << "(" << pressureLMH << ")" << std::endl;
-        //     // std::cout << "Probability of Rain (%): " << std::to_string(rainProbability) << ".00" << std::endl;
-        //     // PrintAscii(pressureLMH, coverageLMH);
-        //     // Utils::PrintNewlines(2);
-        // }
     }
 } // namespace SummaryReport
 

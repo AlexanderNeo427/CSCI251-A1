@@ -33,53 +33,56 @@ namespace WeatherApp {
 
     void AwaitEnterInput() {}
 
-    void RenderGrid(const GridData &gridData, const RENDER_MODE renderMode) {
+    void RenderGrid(const GridData &gridData, const RENDER_MODE renderMode, const int padAmount = 2) {
         const int contentWidth = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
         const int contentHeight = (gridData.topRight.y - gridData.bottomLeft.y) + 1;
 
         // Top border
-        std::cout << "  ";
+        Utils::PaddedPrint(" ", padAmount);
         for (int i = 0; i < (contentWidth + 2); i++) {
-            std::cout << "# ";
+            Utils::PaddedPrint("#", padAmount);
         }
         std::cout << std::endl;
 
         // Content | Middle borders | Y coordinates
         for (int y = contentHeight - 1; y >= 0; y--) {
-            std::cout << y << " # ";
+            Utils::PaddedPrint(y, padAmount);
+            Utils::PaddedPrint("#", padAmount);
             if (renderMode == RENDER_MODE::CITY) {
                 for (int x = 0; x < contentWidth; x++) {
                     if (gridData.arr[x][y] == 0) {
-                        std::cout << "  ";
+                        Utils::PaddedPrint(" ", padAmount);
                     } else {
-                        std::cout << gridData.arr[x][y] << " ";
+                        Utils::PaddedPrint(gridData.arr[x][y], padAmount);
                     }
                 }
             } else if (renderMode == RENDER_MODE::INDEX) {
                 for (int x = 0; x < contentWidth; x++) {
                     const double value = static_cast<double>(gridData.arr[x][y]);
-                    std::cout << floor(value / 10.) << " ";
+                    Utils::PaddedPrint(floor(value / 10.), padAmount);
                 }
             } else if (renderMode == RENDER_MODE::LMH) {
                 for (int x = 0; x < contentWidth; x++) {
                     const int value = gridData.arr[x][y];
-                    std::cout << Utils::GetLMH(value) << " ";
+                    Utils::PaddedPrint(Utils::GetLMH(value), padAmount);
                 }
             }
             std::cout << "#" << std::endl;
         }
 
         // Bottom border
-        std::cout << "  ";
+        Utils::PaddedPrint(" ", padAmount);
         for (int i = 0; i < (contentWidth + 2); i++) {
-            std::cout << "# ";
+            Utils::PaddedPrint("#", padAmount);
         }
         std::cout << std::endl;
 
         // X coordinates
-        std::cout << "    ";
+        for (int i = 0; i < 2; i++) {
+            Utils::PaddedPrint(" ", padAmount);
+        }
         for (int i = 0; i < contentWidth; i++) {
-            std::cout << i << " ";
+            Utils::PaddedPrint(i, padAmount);
         }
         std::cout << std::endl;
     };

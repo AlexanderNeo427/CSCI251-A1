@@ -4,19 +4,19 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <set>
+#include <unordered_set>
 #include <vector>
 
 namespace Utils {
     template <typename T>
-    void PaddedPrint(const T val) {
+    void PaddedPrint(const T val, const int padAmount) {
         std::cout << val;
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < padAmount; i++) {
             std::cout << " ";
         }
     }
 
-    const char GetLMH(const float val) {
+    char GetLMH(const float val) {
         if (val >= 0 && val < 35) {
             return 'L';
         } else if (val >= 35 && val < 65) {
@@ -72,15 +72,15 @@ namespace Utils {
         return ReadFileStatus(true, allLines);
     }
 
-    std::set<Vec2D> VectorToSet(const std::vector<Vec2D> &posVec) {
-        std::set<Vec2D> posSet;
+    std::unordered_set<Vec2D, Vec2D::Hash> VectorToSet(const std::vector<Vec2D> &posVec) {
+        std::unordered_set<Vec2D, Vec2D::Hash> posSet({});
         for (const Vec2D &pos : posVec) {
             posSet.insert(pos);
         }
         return posSet;
     }
 
-    std::vector<Vec2D> SetToVector(const std::set<Vec2D> &posSet) {
+    std::vector<Vec2D> SetToVector(const std::unordered_set<Vec2D, Vec2D::Hash> &posSet) {
         std::vector<Vec2D> posVec;
         for (const Vec2D &pos : posSet) {
             posVec.emplace_back(pos);
