@@ -3,6 +3,7 @@
 
 #include "dataLoader.hpp"
 #include "declarations.hpp"
+#include "summaryReport.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -11,11 +12,13 @@ namespace WeatherApp {
         std::cout << "Student ID: 9085610" << std::endl;
         std::cout << "Student Name: Alexander Neo" << std::endl;
         std::cout << "-------------------------" << std::endl;
-        std::cout << "Welcome to Weather Information Processing System!" << std::endl << std::endl;
+        std::cout << "Welcome to Weather Information Processing System!" << std::endl
+                  << std::endl;
         for (const std::pair<OPTION, std::string> op : ALL_OPTIONS) {
             std::cout << static_cast<int>(op.first) << ")    " << op.second << std::endl;
         }
-        std::cout << std::endl << "Please enter your choice: ";
+        std::cout << std::endl
+                  << "Please enter your choice: ";
     };
 
     InputData AwaitUserInput() {
@@ -31,8 +34,8 @@ namespace WeatherApp {
     void AwaitEnterInput() {}
 
     void RenderGrid(const GridData &gridData, const RENDER_MODE renderMode) {
-        const int contentWidth = (gridData.rangeX.max - gridData.rangeX.min) + 1;
-        const int contentHeight = (gridData.rangeY.max - gridData.rangeY.min) + 1;
+        const int contentWidth = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
+        const int contentHeight = (gridData.topRight.y - gridData.bottomLeft.y) + 1;
 
         // Top border
         std::cout << "  ";
@@ -102,9 +105,9 @@ namespace WeatherApp {
                     return GenericStatus(false, "Error loading data from config file");
                 }
                 const ConfigData &cfg = configDataStatus.configData;
-                refAllGrids[GRID_TYPE::CITY] = DataLoader::LoadCityLocations(cfg.cityLocationEntries, cfg, refCityLookupTable);
-                refAllGrids[GRID_TYPE::COVERAGE] = DataLoader::LoadGenericData(cfg.coverageEntries, cfg);
-                refAllGrids[GRID_TYPE::PRESSURE] = DataLoader::LoadGenericData(cfg.pressureEntries, cfg);
+                refAllGrids[GRID_TYPE::CITY] = DataLoader::LoadCityLocations(cfg.cityLocations, cfg, refCityLookupTable);
+                refAllGrids[GRID_TYPE::COVERAGE] = DataLoader::LoadGenericData(cfg.cloudCoverages, cfg);
+                refAllGrids[GRID_TYPE::PRESSURE] = DataLoader::LoadGenericData(cfg.atmosPressures, cfg);
                 break;
             }
             case OPTION::DISPLAY_CITY_MAP:
@@ -123,7 +126,7 @@ namespace WeatherApp {
                 RenderGrid(refAllGrids[GRID_TYPE::PRESSURE], RENDER_MODE::LMH);
                 break;
             case OPTION::SUMMARY_REPORT: {
-                std::cout << "TODO: Print the summary report" << std::endl;
+                SummaryReport::GenerateSummaryReport(refAllGrids, refCityLookupTable);
                 break;
             }
             default: break;

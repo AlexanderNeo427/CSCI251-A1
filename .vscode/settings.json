@@ -52,6 +52,7 @@
         "typeinfo": "cpp",
         "codecvt": "cpp",
         "ratio": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "unordered_set": "cpp"
     }
 }

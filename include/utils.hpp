@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <set>
 #include <vector>
 
 namespace Utils {
@@ -58,6 +59,22 @@ namespace Utils {
         }
         inFile.close();
         return ReadFileStatus(true, allLines);
+    }
+
+    std::set<Vec2D> VectorToSet(const std::vector<Vec2D> &posVec) {
+        std::set<Vec2D> posSet;
+        for (const Vec2D &pos : posVec) {
+            posSet.insert(pos);
+        }
+        return posSet;
+    }
+
+    std::vector<Vec2D> SetToVector(const std::set<Vec2D> &posSet) {
+        std::vector<Vec2D> posVec;
+        for (const Vec2D &pos : posSet) {
+            posVec.emplace_back(pos);
+        }
+        return posVec;
     }
 } // namespace Utils
 

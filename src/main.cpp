@@ -35,7 +35,8 @@ int main() {
     // Cleanup
     for (const std::pair<const GRID_TYPE, GridData> &grid : allGrids) {
         GridData data = grid.second;
-        for (int x = 0; x < (data.rangeX.max - data.rangeX.min) + 1; x++) {
+        const int width = (data.topRight.x - data.bottomLeft.x) + 1;
+        for (int x = 0; x < width; x++) {
             delete[] data.arr[x];
             data.arr[x] = nullptr;
         }

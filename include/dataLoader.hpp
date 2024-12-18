@@ -33,30 +33,30 @@ namespace DataLoader {
                 const int rangeMax = std::stoi(gridRange[1]);
 
                 if (axisKey == "GridX_IdxRange") {
-                    configData.rangeX.min = rangeMin;
-                    configData.rangeX.max = rangeMax;
+                    configData.bottomLeft.x = rangeMin;
+                    configData.topRight.x = rangeMax;
                 } else {
-                    configData.rangeY.min = rangeMin;
-                    configData.rangeY.max = rangeMax;
+                    configData.bottomLeft.y = rangeMin;
+                    configData.topRight.y = rangeMax;
                 }
             } else if (Utils::StrContains(line, "citylocation.txt")) { // Set the 'city location' data
                 const ReadFileStatus rawLocationData = Utils::ReadLinesFromFile(line);
                 if (!rawLocationData.status) {
                     return ConfigDataStatus(false);
                 }
-                configData.cityLocationEntries = rawLocationData.allLines;
+                configData.cityLocations = rawLocationData.allLines;
             } else if (Utils::StrContains(line, "cloudcover.txt")) { // Set the 'cloud coveragea' data
                 const ReadFileStatus rawCoverageData = Utils::ReadLinesFromFile(line);
                 if (!rawCoverageData.status) {
                     return ConfigDataStatus(false);
                 }
-                configData.coverageEntries = rawCoverageData.allLines;
+                configData.cloudCoverages = rawCoverageData.allLines;
             } else if (Utils::StrContains(line, "pressure.txt")) { // Set the 'pressure' data
                 const ReadFileStatus rawPressureData = Utils::ReadLinesFromFile(line);
                 if (!rawPressureData.status) {
                     return ConfigDataStatus(false);
                 }
-                configData.pressureEntries = rawPressureData.allLines;
+                configData.atmosPressures = rawPressureData.allLines;
             }
         }
         return ConfigDataStatus(true, configData);
@@ -67,14 +67,12 @@ namespace DataLoader {
         const ConfigData &cfg,
         std::map<int, std::string> &refCityLookupTable) {
 
-        const int width = (cfg.rangeX.max - cfg.rangeX.min) + 1;
-        const int height = (cfg.rangeY.max - cfg.rangeY.min) + 1;
+        const int width = (cfg.topRight.x - cfg.bottomLeft.x) + 1;
+        const int height = (cfg.topRight.y - cfg.bottomLeft.y) + 1;
 
         auto grid = GridData();
-        grid.rangeX.min = cfg.rangeX.min;
-        grid.rangeX.max = cfg.rangeX.max;
-        grid.rangeY.min = cfg.rangeY.min;
-        grid.rangeY.max = cfg.rangeY.max;
+        grid.bottomLeft = cfg.bottomLeft;
+        grid.topRight = cfg.topRight;
 
         grid.arr = new int *[width];
         for (int x = 0; x < width; x++) {
@@ -102,14 +100,12 @@ namespace DataLoader {
     }
 
     GridData LoadGenericData(const std::vector<std::string> &genericData, const ConfigData &cfg) {
-        const int width = (cfg.rangeX.max - cfg.rangeX.min) + 1;
-        const int height = (cfg.rangeY.max - cfg.rangeY.min) + 1;
+        const int width = (cfg.topRight.x - cfg.bottomLeft.x) + 1;
+        const int height = (cfg.topRight.y - cfg.bottomLeft.y) + 1;
 
         auto grid = GridData();
-        grid.rangeX.min = cfg.rangeX.min;
-        grid.rangeX.max = cfg.rangeX.max;
-        grid.rangeY.min = cfg.rangeY.min;
-        grid.rangeY.max = cfg.rangeY.max;
+        grid.bottomLeft = cfg.bottomLeft;
+        grid.topRight = cfg.topRight;
 
         grid.arr = new int *[width];
         for (int x = 0; x < width; x++) {

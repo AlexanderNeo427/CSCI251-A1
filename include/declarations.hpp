@@ -1,6 +1,7 @@
 #ifndef DECLARATIONS_H
 #define DECLARATIONS_H
 
+#include <cmath>
 #include <map>
 #include <string>
 #include <vector>
@@ -22,24 +23,26 @@ enum class GRID_TYPE {
     PRESSURE
 };
 
-struct Range {
-    int min, max;
-};
-
-struct Pos2D {
+struct Vec2D {
     int x, y;
-    Pos2D(): x(0), y(0) {}
-    Pos2D(const int _x, const int _y) : x(_x), y(_y) {}
+    Vec2D() : x(0), y(0) {}
+    Vec2D(const int _x, const int _y) : x(_x), y(_y) {}
+
+    bool operator<(const Vec2D &rhs) const {
+        const double len = sqrt(x * x + y * y);
+        const double otherLen = sqrt(rhs.x * rhs.x + rhs.y * rhs.y);
+        return len < otherLen;
+    }
 };
 
 struct GridData {
     int **arr;
-    Range rangeX, rangeY;
+    Vec2D bottomLeft, topRight;
 };
 
 struct ConfigData {
-    Range rangeX, rangeY;
-    std::vector<std::string> cityLocationEntries, coverageEntries, pressureEntries;
+    Vec2D bottomLeft, topRight;
+    std::vector<std::string> cityLocations, cloudCoverages, atmosPressures;
 };
 
 /*
@@ -105,6 +108,17 @@ const std::map<OPTION, std::string> ALL_OPTIONS{
     {OPTION::ATMOS_PRESSURE_LMH, "Display atmospheric pressure map (LMH symbols)"},
     {OPTION::SUMMARY_REPORT, "Show weather forecast summary report"},
     {OPTION::QUIT, "Quit"},
+};
+
+const std::vector<Vec2D> ALL_DIRECTIONS{
+    Vec2D(-1, -1), // Bottom-left
+    Vec2D(-1, 0),  // Left
+    Vec2D(-1, 1),  // Top-left
+    Vec2D(0, 1),   // Top
+    Vec2D(1, 1),   // Top-right
+    Vec2D(0, 1),   // Right
+    Vec2D(-1, 1),  // Bottom-right
+    Vec2D(0, -1),  // Bottom
 };
 
 #endif
