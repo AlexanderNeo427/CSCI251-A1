@@ -63,13 +63,7 @@ namespace WeatherApp {
             } else if (renderMode == RENDER_MODE::LMH) {
                 for (int x = 0; x < contentWidth; x++) {
                     const int value = gridData.arr[x][y];
-                    if (value >= 0 && value < 35) {
-                        std::cout << "L ";
-                    } else if (value >= 35 && value < 65) {
-                        std::cout << "M ";
-                    } else {
-                        std::cout << "H ";
-                    }
+                    std::cout << Utils::GetLMH(value) << " ";
                 }
             }
             std::cout << "#" << std::endl;

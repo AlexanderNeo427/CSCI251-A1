@@ -16,6 +16,17 @@ namespace Utils {
         }
     }
 
+    const char GetLMH(const float val) {
+        if (val >= 0 && val < 35) {
+            return 'L';
+        } else if (val >= 35 && val < 65) {
+            return 'M';
+        } else if (val >= 65 && val < 100) {
+            return 'H';
+        }
+        return '-';
+    }
+
     std::vector<std::string> StrSplit(const std::string &str, const char delimiter) {
         std::vector<std::string> allTokens;
         std::string token;

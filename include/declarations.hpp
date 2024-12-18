@@ -29,9 +29,14 @@ struct Vec2D {
     Vec2D(const int _x, const int _y) : x(_x), y(_y) {}
 
     bool operator<(const Vec2D &rhs) const {
-        const double len = sqrt(x * x + y * y);
-        const double otherLen = sqrt(rhs.x * rhs.x + rhs.y * rhs.y);
-        return len < otherLen;
+        if (x != rhs.x) {
+            return x < rhs.x;
+        }
+        return y < rhs.y;
+    }
+
+    bool operator==(const Vec2D &rhs) const {
+        return x == rhs.x && y == rhs.y;
     }
 };
 
