@@ -7,6 +7,7 @@ int main() {
     std::map<CityID, std::string> cityLookupTable;
 
     while (true) {
+        Utils::ResetConsoleColor();
         Utils::PrintNewlines(2);
         WeatherApp::PrintMainMenu();
 

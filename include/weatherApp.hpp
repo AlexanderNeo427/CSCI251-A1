@@ -37,7 +37,18 @@ namespace WeatherApp {
         const int contentWidth = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
         const int contentHeight = (gridData.topRight.y - gridData.bottomLeft.y) + 1;
 
+        const std::vector<CONSOLE_COLOR> colorWheel = {
+            CONSOLE_COLOR::RED,
+            CONSOLE_COLOR::GREEN,
+            CONSOLE_COLOR::BLUE,
+            CONSOLE_COLOR::YELLOW,
+            CONSOLE_COLOR::CYAN,
+            CONSOLE_COLOR::MAGENTA,
+        };
+        int currColorIndex = 0;
+
         // Top border
+        Utils::SetConsoleColor(CONSOLE_COLOR::WHITE);
         Utils::PaddedPrint(" ", padAmount);
         for (int i = 0; i < (contentWidth + 2); i++) {
             Utils::PaddedPrint("#", padAmount);
@@ -45,32 +56,64 @@ namespace WeatherApp {
         std::cout << std::endl;
 
         // Content | Middle borders | Y coordinates
+        std::map<int, CONSOLE_COLOR> numToColor;
         for (int y = contentHeight - 1; y >= 0; y--) {
-            Utils::PaddedPrint(y, padAmount);
+            Utils::ResetConsoleColor();
+            std::cout << " " << y << " ";
+            for (int i = 0; i < std::min(0, padAmount - 2); i++) {
+                std::cout << " ";
+            }
+
+            Utils::SetConsoleColor(CONSOLE_COLOR::WHITE);
             Utils::PaddedPrint("#", padAmount);
             if (renderMode == RENDER_MODE::CITY) {
                 for (int x = 0; x < contentWidth; x++) {
-                    if (gridData.arr[x][y] == 0) {
+                    const int gridVal = gridData.arr[x][y];
+                    if (gridVal == 0) {
                         Utils::PaddedPrint(" ", padAmount);
                     } else {
-                        Utils::PaddedPrint(gridData.arr[x][y], padAmount);
+                        if (numToColor.count(gridVal) == 0) {
+                            numToColor[gridVal] = colorWheel[currColorIndex];
+                            currColorIndex = (currColorIndex + 1) % colorWheel.size();
+                        }
+                        Utils::SetConsoleColor(numToColor[gridVal]);
+                        Utils::PaddedPrint(gridVal, padAmount);
                     }
                 }
             } else if (renderMode == RENDER_MODE::INDEX) {
                 for (int x = 0; x < contentWidth; x++) {
                     const double value = static_cast<double>(gridData.arr[x][y]);
-                    Utils::PaddedPrint(floor(value / 10.), padAmount);
+                    const int indexVal = floor(value / 10.);
+                    // if (numToColor.count(indexVal) == 0) {
+                    //     numToColor[indexVal] = colorWheel[currColorIndex];
+                    //     currColorIndex = (currColorIndex + 1) % colorWheel.size();
+                    // }
+                    // Utils::SetConsoleColor(numToColor[indexVal]);
+                    std::cout << "\033[38;5;" << 160 << "m";
+                    Utils::PaddedPrint(indexVal, padAmount);
                 }
             } else if (renderMode == RENDER_MODE::LMH) {
                 for (int x = 0; x < contentWidth; x++) {
-                    const int value = gridData.arr[x][y];
-                    Utils::PaddedPrint(Utils::GetLMH(value), padAmount);
+                    const char lmh = Utils::GetLMH(gridData.arr[x][y]);
+                    if (lmh == 'L') {
+                        // Utils::SetConsoleColor(CONSOLE_COLOR::GREEN);
+                        std::cout << "\033[38;5;" << 46 << "m";
+                    } else if (lmh == 'M') {
+                        std::cout << "\033[38;5;" << 226 << "m";
+                        // Utils::SetConsoleColor(CONSOLE_COLOR::YELLOW);
+                    } else if (lmh == 'H') {
+                        std::cout << "\033[38;5;" << 160 << "m";
+                        // Utils::SetConsoleColor(CONSOLE_COLOR::RED);
+                    }
+                    Utils::PaddedPrint(lmh, padAmount);
                 }
             }
+            Utils::SetConsoleColor(CONSOLE_COLOR::WHITE);
             std::cout << "#" << std::endl;
         }
 
         // Bottom border
+        Utils::SetConsoleColor(CONSOLE_COLOR::WHITE);
         Utils::PaddedPrint(" ", padAmount);
         for (int i = 0; i < (contentWidth + 2); i++) {
             Utils::PaddedPrint("#", padAmount);
@@ -78,6 +121,7 @@ namespace WeatherApp {
         std::cout << std::endl;
 
         // X coordinates
+        Utils::ResetConsoleColor();
         for (int i = 0; i < 2; i++) {
             Utils::PaddedPrint(" ", padAmount);
         }

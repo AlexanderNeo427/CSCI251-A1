@@ -8,9 +8,29 @@
 
 using CityID = int;
 
-/*
- * Generic Data Containers
- */
+enum class CONSOLE_COLOR {
+    DEFAULT = 0,
+    BLACK = 30,
+    RED = 31,
+    GREEN = 32,
+    YELLOW = 33,
+    BLUE = 34,
+    MAGENTA = 35,
+    CYAN = 36,
+    WHITE = 37,
+};
+
+enum class OPTION {
+    PROCESS_CONFIG_FILE = 1,
+    DISPLAY_CITY_MAP = 2,
+    COVERAGE_MAP_IDX = 3,
+    COVERAGE_MAP_LMH = 4,
+    ATMOS_PRESSURE_IDX = 5,
+    ATMOS_PRESSURE_LMH = 6,
+    SUMMARY_REPORT = 7,
+    QUIT = 8
+};
+
 enum class RENDER_MODE {
     CITY,
     INDEX,
@@ -89,19 +109,9 @@ struct InputData {
         : isValid(_isValid), numChoice(_numChoice) {}
 };
 
-/*
- * Miscellaneous
- */
-enum class OPTION {
-    PROCESS_CONFIG_FILE = 1,
-    DISPLAY_CITY_MAP = 2,
-    COVERAGE_MAP_IDX = 3,
-    COVERAGE_MAP_LMH = 4,
-    ATMOS_PRESSURE_IDX = 5,
-    ATMOS_PRESSURE_LMH = 6,
-    SUMMARY_REPORT = 7,
-    QUIT = 8
-};
+//========================================
+//============= Constants ================
+//========================================
 
 const std::map<OPTION, std::string> ALL_OPTIONS{
     {OPTION::PROCESS_CONFIG_FILE, "Read in and process a configuration file"},
