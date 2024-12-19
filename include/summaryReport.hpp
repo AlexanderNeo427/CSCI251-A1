@@ -29,6 +29,7 @@ namespace SummaryReport {
     }
 
     void PrintAscii(const char avgPressureLMH, const char avgCoverageLMH) {
+        Utils::SetConsoleColor(ANSI_4::CYAN);
         if (avgPressureLMH == 'L') {
             if (avgCoverageLMH == 'H') {
                 std::cout << "~~~~" << std::endl;
@@ -142,6 +143,7 @@ namespace SummaryReport {
 
             const int rainProbability = ComputeRainProbability(pressureLMH, coverageLMH);
 
+            Utils::ResetConsoleColor();
             std::cout << "City Name: " << cityLookupTable.at(cityID) << std::endl;
             std::cout << "City ID: " << cityID << std::endl;
             std::cout << "Ave. Cloud Cover (ACC): " << avgCloudCover << " (" << coverageLMH << ")" << std::endl;

@@ -89,21 +89,13 @@ namespace Utils {
         return posVec;
     }
 
-    void SetConsoleColor(const CONSOLE_COLOR color) {
+    void SetConsoleColor(const ANSI_4 color) {
         const std::string &colorCode = std::to_string(static_cast<int>(color));
         std::cout << "\033[" << colorCode << "m";
     }
 
     void ResetConsoleColor() {
         std::cout << "\033[0m";
-    }
-
-    template <typename T>
-    T PickRandom(const std::vector<T> &choices) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> distr(0, choices.size() - 1);
-        return choices[distr(gen)];
     }
 } // namespace Utils
 

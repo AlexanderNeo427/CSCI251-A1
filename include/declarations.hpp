@@ -8,7 +8,7 @@
 
 using CityID = int;
 
-enum class CONSOLE_COLOR {
+enum class ANSI_4 {
     DEFAULT = 0,
     BLACK = 30,
     RED = 31,
@@ -134,5 +134,29 @@ const std::vector<Vec2D> ALL_DIRECTIONS{
     Vec2D(1, -1),  // Right-Bottom
     Vec2D(0, -1),  // Bottom
 };
+
+const std::map<int, int> CLOUD_COLORS{
+    {0, 152},
+    {1, 159},
+    {2, 153},
+    {3, 147},
+    {4, 110},
+    {5, 116},
+    {6, 117},
+    {7, 111},
+    {8, 81},
+    {9, 87}};
+
+const std::map<int, int> PRESSURE_COLORS{
+    {0, 153},
+    {1, 153},
+    {2, 153},
+    {3, 153},
+    {4, 153},
+    {5, 153},
+    {6, 153},
+    {7, 153},
+    {8, 153},
+    {9, 153}};
 
 #endif
