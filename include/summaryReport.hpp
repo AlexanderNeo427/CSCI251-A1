@@ -119,6 +119,10 @@ namespace SummaryReport {
         return allCityPositions;
     }
 
+    /**
+     * @param allGrids Read-only reference
+     * @param cityLookupTable Read-only reference 
+     */
     void GenerateSummaryReport(const std::map<GRID_TYPE, GridData> &allGrids, const std::map<CityID, std::string> &cityLookupTable) {
         std::cout << "Weather Forecast Summary Report" << std::endl;
         std::cout << "-------------------------------" << std::endl;
