@@ -7,6 +7,7 @@
 #include <vector>
 
 using CityID = int;
+// using iPos2D = std::tuple<int, int>;
 
 namespace ANSI {
     using Color = std::string;
@@ -20,7 +21,7 @@ namespace ANSI {
     const ANSI::Color WHITE = "\033[37m";
 }; // namespace ANSI
 
-enum class OPTION : unsigned int {
+enum class MENU_OPTION : unsigned int {
     PROCESS_CONFIG_FILE = 1,
     DISPLAY_CITY_MAP = 2,
     COVERAGE_MAP_IDX = 3,
@@ -113,7 +114,7 @@ struct InputData final {
 //============= Constants ================
 //========================================
 
-extern const std::map<OPTION, std::string> ALL_OPTIONS;
+extern const std::map<MENU_OPTION, std::string> ALL_OPTIONS;
 extern const std::vector<Vec2D> ALL_DIRECTIONS;
 
 #endif

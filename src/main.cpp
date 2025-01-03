@@ -18,8 +18,8 @@ int main() {
             continue;
         }
 
-        const OPTION userOption = static_cast<OPTION>(inputData.numChoice);
-        if (userOption == OPTION::QUIT) {
+        const MENU_OPTION userOption = static_cast<MENU_OPTION>(inputData.numChoice);
+        if (userOption == MENU_OPTION::QUIT) {
             break;
         }
 

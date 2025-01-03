@@ -13,8 +13,10 @@ void WeatherApp::PrintMainMenu() {
     std::cout << ANSI::DEFAULT;
     Utils::PrintNewlines(2);
 
-    for (const std::pair<OPTION, std::string> op : ALL_OPTIONS) {
-        std::cout << static_cast<int>(op.first) << ")    " << op.second << std::endl;
+    for (const std::pair<const MENU_OPTION, std::string> &op : ALL_OPTIONS) {
+        const int menuOptionIndex = static_cast<int>(op.first);
+        const std::string optionText = op.second;
+        std::cout << (menuOptionIndex + 1) << ")\t" << optionText << std::endl;
     }
     Utils::PrintNewlines(1);
     std::cout << "Please enter your choice: ";
@@ -120,12 +122,12 @@ void WeatherApp::RenderGrid(const GridData &gridData, const RENDER_MODE renderMo
  * @param refAllGrids Mutable reference to the grid data
  */
 GenericStatus WeatherApp::HandleOption(
-    const OPTION option,
+    const MENU_OPTION option,
     std::map<GRID_TYPE, GridData> &refAllGrids,
     std::map<CityID, std::string> &refCityLookupTable) {
 
     switch (option) {
-        case OPTION::PROCESS_CONFIG_FILE: {
+        case MENU_OPTION::PROCESS_CONFIG_FILE: {
             const ConfigDataStatus configDataStatus = DataLoader::GetConfigData("./data/config.txt");
             if (!configDataStatus.status) {
                 return GenericStatus(false, "Error loading data from config file");
@@ -136,22 +138,22 @@ GenericStatus WeatherApp::HandleOption(
             refAllGrids[GRID_TYPE::PRESSURE] = DataLoader::LoadGenericData(cfg.atmosPressures, cfg);
             break;
         }
-        case OPTION::DISPLAY_CITY_MAP:
-            RenderGrid(refAllGrids[GRID_TYPE::CITY], RENDER_MODE::CITY);
+        case MENU_OPTION::DISPLAY_CITY_MAP:
+            WeatherApp::RenderGrid(refAllGrids[GRID_TYPE::CITY], RENDER_MODE::CITY);
             break;
-        case OPTION::COVERAGE_MAP_IDX:
-            RenderGrid(refAllGrids[GRID_TYPE::COVERAGE], RENDER_MODE::INDEX);
+        case MENU_OPTION::COVERAGE_MAP_IDX:
+            WeatherApp::RenderGrid(refAllGrids[GRID_TYPE::COVERAGE], RENDER_MODE::INDEX);
             break;
-        case OPTION::COVERAGE_MAP_LMH:
-            RenderGrid(refAllGrids[GRID_TYPE::COVERAGE], RENDER_MODE::LMH);
+        case MENU_OPTION::COVERAGE_MAP_LMH:
+            WeatherApp::RenderGrid(refAllGrids[GRID_TYPE::COVERAGE], RENDER_MODE::LMH);
             break;
-        case OPTION::ATMOS_PRESSURE_IDX:
-            RenderGrid(refAllGrids[GRID_TYPE::PRESSURE], RENDER_MODE::INDEX);
+        case MENU_OPTION::ATMOS_PRESSURE_IDX:
+            WeatherApp::RenderGrid(refAllGrids[GRID_TYPE::PRESSURE], RENDER_MODE::INDEX);
             break;
-        case OPTION::ATMOS_PRESSURE_LMH:
-            RenderGrid(refAllGrids[GRID_TYPE::PRESSURE], RENDER_MODE::LMH);
+        case MENU_OPTION::ATMOS_PRESSURE_LMH:
+            WeatherApp::RenderGrid(refAllGrids[GRID_TYPE::PRESSURE], RENDER_MODE::LMH);
             break;
-        case OPTION::SUMMARY_REPORT: {
+        case MENU_OPTION::SUMMARY_REPORT: {
             SummaryReport::GenerateSummaryReport(refAllGrids, refCityLookupTable);
             break;
         }

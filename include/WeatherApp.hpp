@@ -12,7 +12,7 @@ namespace WeatherApp {
      * @param refAllGrids Mutable reference to the grid data
      */
     GenericStatus HandleOption(
-        const OPTION option,
+        const MENU_OPTION option,
         std::map<GRID_TYPE, GridData> &refAllGrids,
         std::map<CityID, std::string> &refCityLookupTable);
 }; // namespace WeatherApp

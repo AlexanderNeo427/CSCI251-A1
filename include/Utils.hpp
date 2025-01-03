@@ -11,7 +11,7 @@
 #include <vector>
 
 namespace Utils {
-    template <typename T>
+    template <class T>
     void PaddedPrint(const T val, const int padAmount) {
         std::cout << val;
         for (int i = 0; i < padAmount; i++) {
@@ -26,14 +26,6 @@ namespace Utils {
     ReadFileStatus ReadLinesFromFile(const std::string &filePath);
     std::unordered_set<Vec2D, Vec2D::Hash> VectorToSet(const std::vector<Vec2D> &posVec);
     std::vector<Vec2D> SetToVector(const std::unordered_set<Vec2D, Vec2D::Hash> &posSet);
-    // void SetConsoleColor(const ANSI_4 color) {
-    //     const std::string &colorCode = std::to_string(static_cast<int>(color));
-    //     std::cout << "\033[" << colorCode << "m";
-    // }
-
-    // void ResetConsoleColor() {
-    //     std::cout << "\033[0m";
-    // }
 } // namespace Utils
 
 #endif

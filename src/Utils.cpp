@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "Utils.hpp"
 
 char Utils::GetLMH(const float val) {
     if (val >= 0 && val < 35) {
