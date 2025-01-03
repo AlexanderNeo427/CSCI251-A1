@@ -93,7 +93,7 @@ namespace DataLoader {
             const int posY = std::stoi(locData[1]);
             grid.arr[posX][posY] = cityType;
 
-            const std::string &cityName = splitData[2];
+            const std::string cityName = splitData[2];
             refCityLookupTable[cityType] = cityName;
         }
         return grid;

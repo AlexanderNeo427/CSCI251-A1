@@ -73,6 +73,7 @@ namespace SummaryReport {
                 std::cout << std::endl;
             }
         }
+        Utils::SetConsoleColor(ANSI_4::DEFAULT);
     }
 
     int ComputeRainProbability(const char avgPressureLMH, const char avgCoverageLMH) {
