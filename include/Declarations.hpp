@@ -8,19 +8,19 @@
 
 using CityID = int;
 
-enum class ANSI_4 {
-    DEFAULT = 0,
-    BLACK = 30,
-    RED = 31,
-    GREEN = 32,
-    YELLOW = 33,
-    BLUE = 34,
-    MAGENTA = 35,
-    CYAN = 36,
-    WHITE = 37,
-};
+namespace ANSI {
+    using Color = std::string;
 
-enum class OPTION {
+    const ANSI::Color DEFAULT = "\033[0m";
+    const ANSI::Color RED = "\033[31m";
+    const ANSI::Color GREEN = "\033[32m";
+    const ANSI::Color YELLOW = "\033[33m";
+    const ANSI::Color BLUE = "\033[34m";
+    const ANSI::Color CYAN = "\033[36m";
+    const ANSI::Color WHITE = "\033[37m";
+}; // namespace ANSI
+
+enum class OPTION : unsigned int {
     PROCESS_CONFIG_FILE = 1,
     DISPLAY_CITY_MAP = 2,
     COVERAGE_MAP_IDX = 3,
@@ -31,19 +31,19 @@ enum class OPTION {
     QUIT = 8
 };
 
-enum class RENDER_MODE {
+enum class RENDER_MODE : unsigned int {
     CITY,
     INDEX,
     LMH,
 };
 
-enum class GRID_TYPE {
+enum class GRID_TYPE : unsigned int {
     CITY,
     COVERAGE,
     PRESSURE
 };
 
-struct Vec2D {
+struct Vec2D final {
     int x, y;
     Vec2D() : x(0), y(0) {}
     Vec2D(const int _x, const int _y) : x(_x), y(_y) {}
@@ -59,12 +59,12 @@ struct Vec2D {
     };
 };
 
-struct GridData {
+struct GridData final {
     int **arr;
     Vec2D bottomLeft, topRight;
 };
 
-struct ConfigData {
+struct ConfigData final {
     Vec2D bottomLeft, topRight;
     std::vector<std::string> cityLocations, cloudCoverages, atmosPressures;
 };
@@ -75,7 +75,7 @@ struct ConfigData {
  * A common convention you will see used throughout the application is a function returning a SomeStatus
  * These structs just bundle a 'bool status' with whatever is being returned - so that the caller can check the 'status' or 'success' of the return
  */
-struct GenericStatus {
+struct GenericStatus final {
     const bool status;
     const std::string message;
 
@@ -83,7 +83,7 @@ struct GenericStatus {
         : status(_status), message(_message) {}
 };
 
-struct ReadFileStatus {
+struct ReadFileStatus final {
     const bool status;
     const std::vector<std::string> allLines;
 
@@ -93,7 +93,7 @@ struct ReadFileStatus {
         : status(_status), allLines(_allLines) {}
 };
 
-struct ConfigDataStatus {
+struct ConfigDataStatus final {
     const bool status;
     const ConfigData configData;
 
@@ -101,7 +101,7 @@ struct ConfigDataStatus {
         : status(_status), configData(_configData) {}
 };
 
-struct InputData {
+struct InputData final {
     const bool isValid;
     const int numChoice;
 
@@ -113,50 +113,7 @@ struct InputData {
 //============= Constants ================
 //========================================
 
-const std::map<OPTION, std::string> ALL_OPTIONS{
-    {OPTION::PROCESS_CONFIG_FILE, "Read in and process a configuration file"},
-    {OPTION::DISPLAY_CITY_MAP, "Display city map"},
-    {OPTION::COVERAGE_MAP_IDX, "Display cloud coverage map (cloudiness index)"},
-    {OPTION::COVERAGE_MAP_LMH, "Display cloud coverage map (LMH symbols)"},
-    {OPTION::ATMOS_PRESSURE_IDX, "Display atmospheric pressure map (pressure index)"},
-    {OPTION::ATMOS_PRESSURE_LMH, "Display atmospheric pressure map (LMH symbols)"},
-    {OPTION::SUMMARY_REPORT, "Show weather forecast summary report"},
-    {OPTION::QUIT, "Quit"},
-};
-
-const std::vector<Vec2D> ALL_DIRECTIONS{
-    Vec2D(-1, -1), // Bottom-Left
-    Vec2D(-1, 0),  // Left
-    Vec2D(-1, 1),  // Left-Top
-    Vec2D(0, 1),   // Top
-    Vec2D(1, 1),   // Right-Top
-    Vec2D(1, 0),   // Right
-    Vec2D(1, -1),  // Right-Bottom
-    Vec2D(0, -1),  // Bottom
-};
-
-const std::map<int, int> CLOUD_COLORS{
-    {0, 152},
-    {1, 159},
-    {2, 153},
-    {3, 147},
-    {4, 110},
-    {5, 116},
-    {6, 117},
-    {7, 111},
-    {8, 81},
-    {9, 87}};
-
-const std::map<int, int> PRESSURE_COLORS{
-    {0, 153},
-    {1, 153},
-    {2, 153},
-    {3, 153},
-    {4, 153},
-    {5, 153},
-    {6, 153},
-    {7, 153},
-    {8, 153},
-    {9, 153}};
+extern const std::map<OPTION, std::string> ALL_OPTIONS;
+extern const std::vector<Vec2D> ALL_DIRECTIONS;
 
 #endif

@@ -1,13 +1,13 @@
-#include "weatherApp.hpp"
+#include "Utils.hpp"
+#include "WeatherApp.hpp"
 #include <iostream>
-#include <map>
 
 int main() {
     std::map<GRID_TYPE, GridData> allGrids;
     std::map<CityID, std::string> cityLookupTable;
 
     while (true) {
-        Utils::ResetConsoleColor();
+        std::cout << ANSI::DEFAULT;
         Utils::PrintNewlines(2);
         WeatherApp::PrintMainMenu();
 
