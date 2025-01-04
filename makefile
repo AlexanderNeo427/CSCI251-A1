@@ -1,6 +1,6 @@
 # Compiler and Flags
 CXX = g++
-CXXFLAGS = -Wall -Werror -Wextra -std=c++11 -Iinclude
+CXXFLAGS = -Wall -Werror -std=c++11 -Iinclude
 # CXXFLAGS_BUILD = -Wall -Wextra -Werror -std=c++14 -Iinclude
 # CXXFLAGS_DEBUG = -Wall -std=c++14 -Iinclude
 

@@ -1,12 +1,12 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include <string>
+#include "Statuses.h"
 
 namespace Input {
-    bool AwaitStrInput(std::string &strInput, std::string &message, const std::string &prompt = "");
-    bool AwaitCharInput(char &charInput, std::string &message, const std::string &prompt = "");
-    bool AwaitIntInput(int &intInput, std::string &message, const std::string &prompt = "");
+    StrInputStatus AwaitStrInput(const std::string &prompt = "");
+    CharInputStatus AwaitCharInput(const std::string &prompt = "");
+    IntInputStatus AwaitIntInput(const std::string &prompt = "");
 }; // namespace Input
 
 #endif

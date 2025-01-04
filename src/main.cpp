@@ -1,23 +1,39 @@
-#include "Declarations.h"
+#include "Input.h"
+#include "Utils.h"
 #include "WeatherApp.h"
+
 #include <iostream>
 
 int main() {
     while (true) {
         std::cout << ANSI::DEFAULT;
         WeatherApp::PrintMainMenu();
-        break;
+
+        // Await valid input
+        const IntInputStatus intInputStatus = Input::AwaitIntInput("Please enter your choice: ");
+        if (!intInputStatus.success) {
+            std::cerr << intInputStatus.message << std::endl;
+        }
+
+        // Validate input
+        const int userChoice = intInputStatus.input;
+        const int numOptions = static_cast<int>(MENU_OPTION::ENTRY_COUNT);
+        if (userChoice < 1 || userChoice > numOptions) {
+            std::cerr << "Please pick a number from 1-" << numOptions << std::endl;
+            continue;
+        }
+
+        // Handle quit input
+        const int choiceIndex = userChoice - 1;
+        const MENU_OPTION chosenOption = static_cast<MENU_OPTION>(choiceIndex);
+        if (chosenOption == MENU_OPTION::QUIT) {
+            break;
+        }
+
+        // Handle the rest of the options
+        std::cout << "[ " << WeatherApp::OptionToText(chosenOption) << " ]";
+        Utils::PrintNewlines(2);
+        WeatherApp::HandleOption(chosenOption);
     }
-    // Cleanup
-    // for (const std::pair<const GRID_TYPE, GridData> &grid : allGrids) {
-    //     GridData data = grid.second;
-    //     const int width = (data.topRight.x - data.bottomLeft.x) + 1;
-    //     for (int x = 0; x < width; x++) {
-    //         delete[] data.arr[x];
-    //         data.arr[x] = nullptr;
-    //     }
-    //     delete[] data.arr;
-    //     data.arr = nullptr;
-    // }
     return EXIT_SUCCESS;
 };

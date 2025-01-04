@@ -2,55 +2,69 @@
 #include "Declarations.h"
 #include <iostream>
 
-bool Input::AwaitStrInput(std::string &strInput, std::string &message, const std::string &prompt = "") {
+StrInputStatus Input::AwaitStrInput(const std::string &prompt) {
     if (!prompt.empty()) {
         std::cout << prompt;
     }
     std::cout << ANSI::YELLOW;
 
-    std::getline(std::cin, strInput);
+    StrInputStatus retStatus;
+    std::getline(std::cin, retStatus.input);
     if (std::cin.fail()) {
         std::cin.clear();
         std::cout << ANSI::DEFAULT;
-        message = "std::cin failure, please try again....";
-        return false;
+
+        retStatus.success = false;
+        retStatus.message = "std::cin input failure, please try again...";
+        return retStatus;
     }
     std::cout << ANSI::DEFAULT;
-    return true;
+    retStatus.success = true;
+    return retStatus;
 };
 
-bool Input::AwaitCharInput(char &charInput, std::string& message, const std::string &prompt = "") {
-    std::string strInput, strInputStatus;
+CharInputStatus Input::AwaitCharInput(const std::string &prompt) {
+    CharInputStatus retStatus;
 
-    const bool success = Input::AwaitStrInput(strInput, strInputStatus, prompt);
-    if (!success) {
-        message = strInputStatus;
-        return false;
+    const StrInputStatus strInputStatus = Input::AwaitStrInput(prompt);
+    if (!strInputStatus.success) {
+        retStatus.success = false;
+        retStatus.message = strInputStatus.message;
+        return retStatus;
     }
 
-    if (strInput.length() != 1) {
-        message = "Please enter a valid character";
-        return false;
+    if (strInputStatus.input.length() != 1) {
+        retStatus.success = false;
+        retStatus.message = "Input must be of length 1";
+        return retStatus;
     }
-    return true;
+
+    retStatus.input = strInputStatus.input[0];
+    retStatus.success = true;
+    return retStatus;
 };
 
-bool Input::AwaitIntInput(int &intInput, std::string& message, const std::string &prompt = "") {
+IntInputStatus Input::AwaitIntInput(const std::string &prompt) {
+    IntInputStatus retStatus;
+
     try {
-        std::string strInput, strInputStatus;
-        
-        const bool success = Input::AwaitStrInput(strInput, strInputStatus);
-        if (!success) {
-            message = strInputStatus;
-            return false;
+        const StrInputStatus strInputStatus = Input::AwaitStrInput(prompt);
+        if (!strInputStatus.success) {
+            retStatus.success = false;
+            retStatus.message = strInputStatus.message;
+            return retStatus;
         }
-        
-        intInput = std::stoi(strInput);
-        return true;
+        const int extractedInt = std::stoi(strInputStatus.input);
+        retStatus.input = extractedInt;
+        retStatus.success = true;
+        return retStatus;
+    } catch (const std::exception &e) {
+        retStatus.success = false;
+        retStatus.message = e.what();
+        return retStatus;
     }
-    catch (const std::exception& e) {
-        message = e.what();
-        return false;
-    }
-    return true;
+
+    retStatus.success = false;
+    retStatus.message = "Should not be here";
+    return retStatus;
 }

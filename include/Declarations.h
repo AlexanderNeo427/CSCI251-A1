@@ -19,14 +19,16 @@ namespace ANSI {
 }; // namespace ANSI
 
 enum class MENU_OPTION : unsigned int {
-    PROCESS_CONFIG_FILE = 1,
-    DISPLAY_CITY_MAP = 2,
-    COVERAGE_MAP_IDX = 3,
-    COVERAGE_MAP_LMH = 4,
-    ATMOS_PRESSURE_IDX = 5,
-    ATMOS_PRESSURE_LMH = 6,
-    SUMMARY_REPORT = 7,
-    QUIT = 8
+    PROCESS_CONFIG_FILE,
+    DISPLAY_CITY_MAP,
+    COVERAGE_MAP_IDX,
+    COVERAGE_MAP_LMH,
+    ATMOS_PRESSURE_IDX,
+    ATMOS_PRESSURE_LMH,
+    SUMMARY_REPORT,
+    QUIT,
+
+    ENTRY_COUNT,
 };
 
 // const std::pair<MENU_OPTION, std::string> data{
