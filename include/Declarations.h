@@ -1,10 +1,12 @@
 #ifndef DECLARATIONS_H
 #define DECLARATIONS_H
 
+#include <array>
 #include <string>
 #include <utility>
 
 using CityID = int;
+const int MAX_CITY_ID = 9;
 
 namespace ANSI {
     using Color = std::string;
@@ -31,19 +33,6 @@ enum class MENU_OPTION : unsigned int {
     ENTRY_COUNT,
 };
 
-// const std::pair<MENU_OPTION, std::string> data{
-//     std::make_pair(MENU_OPTION::PROCESS_CONFIG_FILE, ""),
-//     std::make_pair(MENU_OPTION::DISPLAY_CITY_MAP, ""),
-//     std::make_pair(MENU_OPTION::COVERAGE_MAP_IDX, ""),
-//     std::make_pair(MENU_OPTION::PROCESS_CONFIG_FILE, ""),
-//     std::make_pair(MENU_OPTION::PROCESS_CONFIG_FILE, ""),
-//     std::make_pair(MENU_OPTION::PROCESS_CONFIG_FILE, ""),
-//     std::make_pair(MENU_OPTION::PROCESS_CONFIG_FILE, ""),
-//     std::make_pair(MENU_OPTION::PROCESS_CONFIG_FILE, ""),
-//     std::make_pair(MENU_OPTION::PROCESS_CONFIG_FILE, ""),
-//     std::make_pair(MENU_OPTION::PROCESS_CONFIG_FILE, ""),
-// };
-
 enum class RENDER_MODE : unsigned int {
     CITY,
     INDEX,
@@ -54,6 +43,26 @@ enum class GRID_TYPE : unsigned int {
     CITY,
     COVERAGE,
     PRESSURE
+};
+
+struct Vec2D {
+    int x = 0, y = 0;
+};
+
+struct GridData {
+    // [0] = ""
+    // [1] = "Small_city"
+    // [2] = "Medium_city"
+    // [3] = "Big_city"
+    // [4] = ""
+    // etc.....
+    std::array<std::string, MAX_CITY_ID> cityNames;
+
+    bool isDataInitialized = false;
+    Vec2D bottomLeft, topRight;
+    int **cityGrid = nullptr;
+    int **cloudGrid = nullptr;
+    int **pressureGrid = nullptr;
 };
 
 #endif

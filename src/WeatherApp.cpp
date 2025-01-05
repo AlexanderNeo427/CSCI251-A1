@@ -14,10 +14,19 @@ void WeatherApp::PrintMainMenu() {
     Utils::PrintNewlines(2);
 };
 
-void WeatherApp::HandleOption(const MENU_OPTION menuOption) {
+void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData& gridData) {
     switch (menuOption) {
         case MENU_OPTION::PROCESS_CONFIG_FILE: {
-            
+            const std::string fileName = "config.txt";
+
+            std::string failReason = "";
+            const bool parseSuccess = Utils::ParseFile(fileName, gridData, failReason);
+
+            if (!parseSuccess) {
+                std::cerr << failReason << std::endl;
+                break;
+            }
+            std::cout << "All records successfully stored. Going back to main menu..." << std::endl;
             break;
         }
         case MENU_OPTION::DISPLAY_CITY_MAP: {

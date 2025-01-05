@@ -1,5 +1,7 @@
-// #include "SummaryReport.hpp"
-// #include "Utils.hpp"
+#include "SummaryReport.h"
+#include "Declarations.h"
+
+#include <iostream>
 
 // std::vector<Vec2D> SummaryReport::WithSurroundingGridArea(const std::vector<Vec2D> &posVec, const Vec2D &bottomLeft, const Vec2D &topRight) {
 //     std::unordered_set<Vec2D, Vec2D::Hash> posSet = Utils::VectorToSet(posVec);
@@ -23,82 +25,82 @@
 //     return sum / static_cast<float>(positions.size());
 // }
 
-// void SummaryReport::PrintAscii(const char avgPressureLMH, const char avgCoverageLMH) {
-//     std::cout << ANSI::CYAN;
-//     if (avgPressureLMH == 'L') {
-//         if (avgCoverageLMH == 'H') {
-//             std::cout << "~~~~" << std::endl;
-//             std::cout << "~~~~~" << std::endl;
-//             std::cout << "\\\\\\\\\\" << std::endl;
-//         } else if (avgCoverageLMH == 'M') {
-//             std::cout << "~~~~" << std::endl;
-//             std::cout << "~~~~~" << std::endl;
-//             std::cout << " \\\\\\\\" << std::endl;
-//         } else if (avgCoverageLMH == 'L') {
-//             std::cout << "~~~~" << std::endl;
-//             std::cout << "~~~~~" << std::endl;
-//             std::cout << "   \\\\\\" << std::endl;
-//         }
-//     } else if (avgPressureLMH == 'M') {
-//         if (avgCoverageLMH == 'H') {
-//             std::cout << "~~~~" << std::endl;
-//             std::cout << "~~~~~" << std::endl;
-//             std::cout << "   \\\\" << std::endl;
-//         } else if (avgCoverageLMH == 'M') {
-//             std::cout << "~~~~" << std::endl;
-//             std::cout << "~~~~~" << std::endl;
-//             std::cout << "    \\" << std::endl;
-//         } else if (avgCoverageLMH == 'L') {
-//             std::cout << "~~~~" << std::endl;
-//             std::cout << "~~~~~" << std::endl;
-//             std::cout << std::endl;
-//         }
-//     } else if (avgPressureLMH == 'H') {
-//         if (avgCoverageLMH == 'H') {
-//             std::cout << "~~~" << std::endl;
-//             std::cout << "~~~~" << std::endl;
-//             std::cout << std::endl;
-//         } else if (avgCoverageLMH == 'M') {
-//             std::cout << "~~" << std::endl;
-//             std::cout << "~~~" << std::endl;
-//             std::cout << std::endl;
-//         } else if (avgCoverageLMH == 'L') {
-//             std::cout << "~" << std::endl;
-//             std::cout << "~~" << std::endl;
-//             std::cout << std::endl;
-//         }
-//     }
-//     std::cout << ANSI::DEFAULT;
-// }
+void SummaryReport::PrintAscii(const char avgPressureLMH, const char avgCoverageLMH) {
+    std::cout << ANSI::CYAN;
+    if (avgPressureLMH == 'L') {
+        if (avgCoverageLMH == 'H') {
+            std::cout << "~~~~" << std::endl;
+            std::cout << "~~~~~" << std::endl;
+            std::cout << "\\\\\\\\\\" << std::endl;
+        } else if (avgCoverageLMH == 'M') {
+            std::cout << "~~~~" << std::endl;
+            std::cout << "~~~~~" << std::endl;
+            std::cout << " \\\\\\\\" << std::endl;
+        } else if (avgCoverageLMH == 'L') {
+            std::cout << "~~~~" << std::endl;
+            std::cout << "~~~~~" << std::endl;
+            std::cout << "   \\\\\\" << std::endl;
+        }
+    } else if (avgPressureLMH == 'M') {
+        if (avgCoverageLMH == 'H') {
+            std::cout << "~~~~" << std::endl;
+            std::cout << "~~~~~" << std::endl;
+            std::cout << "   \\\\" << std::endl;
+        } else if (avgCoverageLMH == 'M') {
+            std::cout << "~~~~" << std::endl;
+            std::cout << "~~~~~" << std::endl;
+            std::cout << "    \\" << std::endl;
+        } else if (avgCoverageLMH == 'L') {
+            std::cout << "~~~~" << std::endl;
+            std::cout << "~~~~~" << std::endl;
+            std::cout << std::endl;
+        }
+    } else if (avgPressureLMH == 'H') {
+        if (avgCoverageLMH == 'H') {
+            std::cout << "~~~" << std::endl;
+            std::cout << "~~~~" << std::endl;
+            std::cout << std::endl;
+        } else if (avgCoverageLMH == 'M') {
+            std::cout << "~~" << std::endl;
+            std::cout << "~~~" << std::endl;
+            std::cout << std::endl;
+        } else if (avgCoverageLMH == 'L') {
+            std::cout << "~" << std::endl;
+            std::cout << "~~" << std::endl;
+            std::cout << std::endl;
+        }
+    }
+    std::cout << ANSI::DEFAULT;
+}
 
-// int SummaryReport::ComputeRainProbability(const char avgPressureLMH, const char avgCoverageLMH) {
-//     if (avgPressureLMH == 'L') {
-//         if (avgCoverageLMH == 'H') {
-//             return 90;
-//         } else if (avgCoverageLMH == 'M') {
-//             return 80;
-//         } else if (avgCoverageLMH == 'L') {
-//             return 70;
-//         }
-//     } else if (avgPressureLMH == 'M') {
-//         if (avgCoverageLMH == 'H') {
-//             return 60;
-//         } else if (avgCoverageLMH == 'M') {
-//             return 50;
-//         } else if (avgCoverageLMH == 'L') {
-//             return 40;
-//         }
-//     } else if (avgPressureLMH == 'H') {
-//         if (avgCoverageLMH == 'H') {
-//             return 30;
-//         } else if (avgCoverageLMH == 'M') {
-//             return 20;
-//         } else if (avgCoverageLMH == 'L') {
-//             return 10;
-//         }
-//     }
-//     return -1;
-// }
+int SummaryReport::ComputeRainProbability(const char avgPressureLMH, const char avgCoverageLMH) {
+    if (avgPressureLMH == 'L') {
+        if (avgCoverageLMH == 'H') {
+            return 90;
+        } else if (avgCoverageLMH == 'M') {
+            return 80;
+        } else if (avgCoverageLMH == 'L') {
+            return 70;
+        }
+    } else if (avgPressureLMH == 'M') {
+        if (avgCoverageLMH == 'H') {
+            return 60;
+        } else if (avgCoverageLMH == 'M') {
+            return 50;
+        } else if (avgCoverageLMH == 'L') {
+            return 40;
+        }
+    } else if (avgPressureLMH == 'H') {
+        if (avgCoverageLMH == 'H') {
+            return 30;
+        } else if (avgCoverageLMH == 'M') {
+            return 20;
+        } else if (avgCoverageLMH == 'L') {
+            return 10;
+        }
+    }
+    return -1;
+}
 
 // std::map<CityID, std::vector<Vec2D>> SummaryReport::GetAllCityPositions(const GridData &cityGrid) {
 //     std::map<CityID, std::vector<Vec2D>> allCityPositions;

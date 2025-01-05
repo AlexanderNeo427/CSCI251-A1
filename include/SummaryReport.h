@@ -4,8 +4,8 @@
 namespace SummaryReport {
     // std::vector<Vec2D> WithSurroundingGridArea(const std::vector<Vec2D> &posVec, const Vec2D &bottomLeft, const Vec2D &topRight);
     // float ComputeGridAverage(const GridData &gridData, const std::vector<Vec2D> &positions);
-    // void PrintAscii(const char avgPressureLMH, const char avgCoverageLMH);
-    // int ComputeRainProbability(const char avgPressureLMH, const char avgCoverageLMH);
+    void PrintAscii(const char avgPressureLMH, const char avgCoverageLMH);
+    int ComputeRainProbability(const char avgPressureLMH, const char avgCoverageLMH);
     // std::map<CityID, std::vector<Vec2D>> GetAllCityPositions(const GridData &cityGrid);
 
     // /**

@@ -5,7 +5,7 @@
 
 namespace WeatherApp {
     void PrintMainMenu();
-    void HandleOption(const MENU_OPTION menuOption);
+    void HandleOption(const MENU_OPTION menuOption, GridData& gridData);
     std::string OptionToText(const MENU_OPTION menuOption);
 }; // namespace WeatherApp
 
