@@ -232,7 +232,7 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
     }
 
     // Try to extract the x and y coordinates from the string
-    int minCoord = 0, maxCoord = 0;
+    int xCoord = 0, yCoord = 0;
     {
         int coordCount = 0;
         std::string *const coordTokens = Utils::TokenizeString(allTokens[0], ",", coordCount, true);
@@ -268,8 +268,8 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
         try {
             minCoordStr.erase(0, 1);
             maxCoordStr.pop_back();
-            minCoord = std::stoi(minCoordStr);
-            maxCoord = std::stoi(maxCoordStr);
+            xCoord = std::stoi(minCoordStr);
+            yCoord = std::stoi(maxCoordStr);
         } catch (const std::exception &e) {
             std::ostringstream oss;
             oss << "=== Extracting city data failure ===" << std::endl;
@@ -283,8 +283,8 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
 
         // CoordX and CoordY extracted - check if they are out of bounds
         // NOTE: This part of the code assumes that the gridData.bottomLeft and gridData.topRight is already initialized
-        if (minCoord < gridData.bottomLeft.x || minCoord > gridData.topRight.x ||
-            maxCoord < gridData.bottomLeft.y || maxCoord > gridData.topRight.y) {
+        if (xCoord < gridData.bottomLeft.x || xCoord > gridData.topRight.x ||
+            yCoord < gridData.bottomLeft.y || yCoord > gridData.topRight.y) {
             std::ostringstream oss;
             oss << "=== Extracting city data failure ===" << std::endl;
             oss << "Coordinates from the following line are out of range: " << cityLine << std::endl;
@@ -305,10 +305,10 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
         // As it was unspecified, I'm only going to allow city ID's within the range of 0 to 9
         // Because higher ID's mess with the grid rendering
         cityID = std::stoi(allTokens[1]);
-        if (cityID < 0 || cityID > MAX_CITY_ID) {
+        if (cityID < 0 || cityID >= MAX_CITY_ID) {
             std::ostringstream oss;
             oss << "=== Extracting city data failure ===" << std::endl;
-            oss << "Following line in file clashes with data saved from previous line:" << std::endl;
+            oss << "City ID out of range (0-" << (MAX_CITY_ID - 1) << "): " << std::endl;
             oss << cityLine;
             Utils::PrintNewlines(2, oss);
             extractFailReason = oss.str();
@@ -345,7 +345,9 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
     }
 
     // The actual saving of the data into the "gridData" reference
-    gridData.cityGrid[minCoord][maxCoord] = cityID;
+    const int xAdjusted = xCoord - gridData.bottomLeft.x;
+    const int yAdjusted = yCoord - gridData.bottomLeft.y;
+    gridData.cityGrid[xAdjusted][yAdjusted] = cityID;
 
     delete[] allTokens;
     return true;
@@ -448,10 +450,12 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
 
     // std::cout << xCoord << ", " << yCoord << ": " << cellValue << std::endl;
     // Set the extracted coordinate value with the extracted value for that grid cell
+    const int xAdjusted = xCoord - gridData.bottomLeft.x;
+    const int yAdjusted = yCoord - gridData.bottomLeft.y;
     if (cloudOrPressure) {
-        gridData.cloudGrid[xCoord][yCoord] = cellValue;
+        gridData.cloudGrid[xAdjusted][yAdjusted] = cellValue;
     } else {
-        gridData.pressureGrid[xCoord][yCoord] = cellValue;
+        gridData.pressureGrid[xAdjusted][yAdjusted] = cellValue;
     }
     delete[] allTokens;
     return true;

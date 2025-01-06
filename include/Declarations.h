@@ -39,11 +39,11 @@ enum class RENDER_MODE : unsigned int {
     LMH,
 };
 
-enum class GRID_TYPE : unsigned int {
-    CITY,
-    COVERAGE,
-    PRESSURE
-};
+// enum class GRID_TYPE : unsigned int {
+//     CITY,
+//     COVERAGE,
+//     PRESSURE
+// };
 
 struct Vec2D {
     int x = 0, y = 0;
