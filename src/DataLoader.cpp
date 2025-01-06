@@ -63,38 +63,62 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
                 parseFailReason = readFailReason;
                 return false;
             }
-            std::cout << "Successfully parsed city locations..." << std::endl;
+            cityInitialized = true;
         } else if (aLine.find("cloudcover.txt") != std::string::npos) {
+            std::string readFailReason = "";
+            const bool readSuccess = DataLoader::ReadGenericTextFile(aLine, newGridData, readFailReason, true);
+            if (!readSuccess) {
+                parseFailReason = readFailReason;
+                return false;
+            }
+            cloudInitialized = true;
         } else if (aLine.find("pressure.txt") != std::string::npos) {
+            std::string readFailReason = "";
+            const bool readSuccess = DataLoader::ReadGenericTextFile(aLine, newGridData, readFailReason, false);
+            if (!readSuccess) {
+                parseFailReason = readFailReason;
+                return false;
+            }
+            pressureInitialized = true;
         }
     }
-    std::cout << "Range X Initialized: " << rangeXInitialized << std::endl;
-    std::cout << "Range Y Initialized: " << rangeYInitialized << std::endl;
-    std::cout << "Arrays Initialized: " << arraysInitialized << std::endl;
-    std::cout << "City Initialized: " << cityInitialized << std::endl;
-    std::cout << "Cloud Initialized: " << cloudInitialized << std::endl;
-    std::cout << "Pressure Initialized: " << pressureInitialized << std::endl;
+    // std::cout << "Range X Initialized: " << rangeXInitialized << std::endl;
+    // std::cout << "Range Y Initialized: " << rangeYInitialized << std::endl;
+    // std::cout << "Arrays Initialized: " << arraysInitialized << std::endl;
+    // std::cout << "City Initialized: " << cityInitialized << std::endl;
+    // std::cout << "Cloud Initialized: " << cloudInitialized << std::endl;
+    // std::cout << "Pressure Initialized: " << pressureInitialized << std::endl;
 
-    // if (!rangeXInitialized || !rangeYInitialized || !arraysInitialized ||
-    //     !cityInitialized || !cloudInitialized || !pressureInitialized) {
-    //     // TODO: Descriptive error message
-    //     return false;
-    // }
+    if (!rangeXInitialized || !rangeYInitialized || !arraysInitialized ||
+        !cityInitialized || !cloudInitialized || !pressureInitialized) {
+        std::cerr << "Something is not initialized properly..." << std::endl;
+        return false;
+    }
 
     gridData = newGridData;
     gridData.isDataLoaded = true;
     inFile.close();
 
     // DEBUG
+    // std::cout << "==== CITY GRID ====" << std::endl;
     // std::cout << "Range X: " << newGridData.bottomLeft.x << ", " << newGridData.topRight.x << std::endl;
     // std::cout << "Range Y: " << newGridData.bottomLeft.y << ", " << newGridData.topRight.y << std::endl;
     // const int rangeX = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
     // const int rangeY = (gridData.topRight.y - gridData.bottomLeft.y) + 1;
-    // for (int y = 0; y < rangeY; y++) {
-    //     for (int x = 0; x < rangeX; x++) {
-    //         std::cout << gridData.cityGrid[x][y] << " ";
+    // for (int i = 0; i < 3; i++) {
+    //     for (int y = 0; y < rangeY; y++) {
+    //         for (int x = 0; x < rangeX; x++) {
+    //             if (i == 0) {
+    //                 std::cout << gridData.cityGrid[x][y] << " ";
+    //             } else if (i == 1) {
+    //                 std::cout << gridData.cloudGrid[x][y] << " ";
+    //             } else if (i == 2) {
+    //                 std::cout << gridData.pressureGrid[x][y] << " ";
+    //             }
+    //         }
+    //         std::cout << std::endl;
     //     }
-    //     std::cout << std::endl;
+    //     Utils::PrintNewlines(2);
     // }
 
     return true;
@@ -323,6 +347,112 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
     // The actual saving of the data into the "gridData" reference
     gridData.cityGrid[minCoord][maxCoord] = cityID;
 
+    delete[] allTokens;
+    return true;
+}
+
+bool DataLoader::ReadGenericTextFile(const std::string &filePath, GridData &gridData, std::string &readFailReason, const bool cloudOrPressure) {
+    std::ifstream dataFile(filePath);
+    if (!dataFile.is_open()) {
+        readFailReason = "Failed to open file: " + filePath;
+        return false;
+    }
+
+    std::string aLine;
+    while (std::getline(dataFile, aLine)) {
+        std::string extractFailReason = "";
+        const bool extractSuccess = DataLoader::ExtractGenericDataLine(aLine, gridData, extractFailReason, cloudOrPressure);
+        if (!extractSuccess) {
+            readFailReason = extractFailReason;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &gridData, std::string &extractFailReason, const bool cloudOrPressure) {
+    const std::string cloudOrPressureStr = cloudOrPressure ? "cloud" : "pressure";
+
+    int tokenCount = 0;
+    std::string *const allTokens = Utils::TokenizeString(dataLine, "-", tokenCount);
+    if (tokenCount != 2) {
+        std::ostringstream oss;
+        oss << "=== Extract " << cloudOrPressureStr << " data failure ===" << std::endl;
+        oss << "Following line has wrong format (wrong token count): " << dataLine << std::endl;
+        extractFailReason = oss.str();
+        return false;
+    }
+
+    // Extract the x and y coordinates from the first token e.g [4, 7]
+    int xCoord = 0, yCoord = 0;
+    {
+        int coordTokenCount = 0;
+        std::string *const coordTokens = Utils::TokenizeString(allTokens[0], ",", coordTokenCount, true);
+
+        // [0] - "[3", [1] - "7]"
+        if (coordTokenCount != 2) {
+            std::ostringstream oss;
+            oss << "=== Extract " << cloudOrPressure << " data failure ===" << std::endl;
+            oss << "Following line has wrong format (wrong token count): " << allTokens[0] << std::endl;
+            extractFailReason = oss.str();
+
+            delete[] allTokens;
+            delete[] coordTokens;
+            return false;
+        }
+
+        std::string xCoordStr = coordTokens[0];
+        std::string yCoordStr = coordTokens[1];
+        // std::cout << "First: " << xCoordStr[0] << std::endl;
+        // std::cout << "Last: " << yCoordStr.back() << std::endl;
+        if (xCoordStr[0] != '[' || yCoordStr.back() != ']') {
+            std::ostringstream oss;
+            oss << "=== Extract " << cloudOrPressure << " data failure ===" << std::endl;
+            oss << "Following line has wrong format (missing brackets): " << allTokens[0] << std::endl;
+            extractFailReason = oss.str();
+
+            delete[] allTokens;
+            delete[] coordTokens;
+            return false;
+        }
+
+        xCoordStr.erase(0, 1);
+        yCoordStr.pop_back();
+        try {
+            xCoord = std::stoi(xCoordStr);
+            yCoord = std::stoi(yCoordStr);
+
+        } catch (const std::exception &e) {
+            std::ostringstream oss;
+            oss << "=== Extract " << cloudOrPressure << " data failure ===" << std::endl;
+            oss << e.what() << std::endl;
+            extractFailReason = oss.str();
+
+            delete[] allTokens;
+            delete[] coordTokens;
+            return false;
+        }
+        delete[] coordTokens;
+    }
+
+    // Extract the cell value
+    int cellValue = 0;
+    {
+        try {
+            cellValue = std::stoi(allTokens[1]);
+        } catch (const std::exception &e) {
+            delete[] allTokens;
+            return false;
+        }
+    }
+
+    // std::cout << xCoord << ", " << yCoord << ": " << cellValue << std::endl;
+    // Set the extracted coordinate value with the extracted value for that grid cell
+    if (cloudOrPressure) {
+        gridData.cloudGrid[xCoord][yCoord] = cellValue;
+    } else {
+        gridData.pressureGrid[xCoord][yCoord] = cellValue;
+    }
     delete[] allTokens;
     return true;
 }
