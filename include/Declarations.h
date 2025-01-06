@@ -6,7 +6,7 @@
 #include <utility>
 
 using CityID = int;
-const int MAX_CITY_ID = 9;
+const int MAX_CITY_ID = 99;
 
 namespace ANSI {
     using Color = std::string;
@@ -58,11 +58,23 @@ struct GridData {
     // etc.....
     std::array<std::string, MAX_CITY_ID> cityNames;
 
-    bool isDataInitialized = false;
+    bool isDataLoaded;
     Vec2D bottomLeft, topRight;
-    int **cityGrid = nullptr;
-    int **cloudGrid = nullptr;
-    int **pressureGrid = nullptr;
+    int **cityGrid, **cloudGrid, **pressureGrid;
+
+    GridData()
+        : cityNames({}), isDataLoaded(false),
+          bottomLeft(), topRight(),
+          cityGrid(nullptr), cloudGrid(nullptr), pressureGrid(nullptr) {}
+
+    GridData(const GridData &rhs)
+        : cityNames(rhs.cityNames),
+          isDataLoaded(rhs.isDataLoaded),
+          bottomLeft(rhs.bottomLeft),
+          topRight(rhs.topRight),
+          cityGrid(rhs.cityGrid),
+          cloudGrid(rhs.cloudGrid),
+          pressureGrid(rhs.pressureGrid){};
 };
 
 #endif

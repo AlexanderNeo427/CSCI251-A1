@@ -1,121 +1,328 @@
+#include "DataLoader.h"
+#include "Utils.h"
+#include <sstream>
 
-// /**
-//  * @return The data from the config file, bundled into a 'ConfigDataStatus' struct
-//  */
-// ConfigDataStatus DataLoader::GetConfigData(const std::string &filePath) {
-//     const ReadFileStatus configFileData = Utils::ReadLinesFromFile(filePath);
-//     if (!configFileData.status) {
-//         std::cout << "Error reading from file at: " << filePath << std::endl;
-//         return ConfigDataStatus(false);
-//     }
+bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std::string &parseFailReason) {
+    std::ifstream inFile(filePath);
+    if (!inFile.is_open()) {
+        parseFailReason = "Error while trying to open file at: " + filePath;
+        return false;
+    }
 
-//     auto configData = ConfigData();
-//     for (const std::string &line : configFileData.allLines) {
-//         if (line.empty() || line.find("//") == 0) { // Ignore empty lines & comments
-//             continue;
-//         }
-//         if (Utils::StrContains(line, "=")) { // Set the 'grid idx range'
-//             const std::vector<std::string> data = Utils::StrSplit(line, '=');
-//             const std::string axisKey = data[0];
+    GridData newGridData;
+    bool rangeXInitialized = false, rangeYInitialized = false, arraysInitialized = false;
+    bool cityInitialized = false, cloudInitialized = false, pressureInitialized = false;
 
-//             const std::vector<std::string> gridRange = Utils::StrSplit(data[1], '-');
-//             const int rangeMin = std::stoi(gridRange[0]);
-//             const int rangeMax = std::stoi(gridRange[1]);
+    std::string aLine;
+    while (std::getline(inFile, aLine)) {
+        // Once we have extracted the "X" and "Y" minmax range, but have yet to initialize the arrays...
+        // Init the arrays here
+        if (rangeXInitialized && rangeYInitialized && !arraysInitialized) {
+            const int rangeX = (newGridData.topRight.x - newGridData.bottomLeft.x) + 1;
+            const int rangeY = (newGridData.topRight.y - newGridData.bottomLeft.y) + 1;
 
-//             if (axisKey == "GridX_IdxRange") {
-//                 configData.bottomLeft.x = rangeMin;
-//                 configData.topRight.x = rangeMax;
-//             } else {
-//                 configData.bottomLeft.y = rangeMin;
-//                 configData.topRight.y = rangeMax;
-//             }
-//         } else if (Utils::StrContains(line, "citylocation.txt")) { // Set the 'city location' data
-//             const ReadFileStatus rawLocationData = Utils::ReadLinesFromFile(line);
-//             if (!rawLocationData.status) {
-//                 return ConfigDataStatus(false);
-//             }
-//             configData.cityLocations = rawLocationData.allLines;
-//         } else if (Utils::StrContains(line, "cloudcover.txt")) { // Set the 'cloud coveragea' data
-//             const ReadFileStatus rawCoverageData = Utils::ReadLinesFromFile(line);
-//             if (!rawCoverageData.status) {
-//                 return ConfigDataStatus(false);
-//             }
-//             configData.cloudCoverages = rawCoverageData.allLines;
-//         } else if (Utils::StrContains(line, "pressure.txt")) { // Set the 'pressure' data
-//             const ReadFileStatus rawPressureData = Utils::ReadLinesFromFile(line);
-//             if (!rawPressureData.status) {
-//                 return ConfigDataStatus(false);
-//             }
-//             configData.atmosPressures = rawPressureData.allLines;
-//         }
-//     }
-//     return ConfigDataStatus(true, configData);
-// }
+            newGridData.cityGrid = new int *[rangeX];
+            newGridData.cloudGrid = new int *[rangeX];
+            newGridData.pressureGrid = new int *[rangeX];
 
-// GridData DataLoader::LoadCityLocations(
-//     const std::vector<std::string> &cityLocationData,
-//     const ConfigData &cfg,
-//     std::map<int, std::string> &refCityLookupTable) {
+            for (int x = 0; x < rangeX; x++) {
+                newGridData.cityGrid[x] = new int[rangeY];
+                newGridData.cloudGrid[x] = new int[rangeY];
+                newGridData.pressureGrid[x] = new int[rangeY];
 
-//     const int width = (cfg.topRight.x - cfg.bottomLeft.x) + 1;
-//     const int height = (cfg.topRight.y - cfg.bottomLeft.y) + 1;
+                for (int y = 0; y < rangeY; y++) {
+                    newGridData.cityGrid[x][y] = 0;
+                    newGridData.cloudGrid[x][y] = 0;
+                    newGridData.pressureGrid[x][y] = 0;
+                }
+            }
+            arraysInitialized = true;
+        }
 
-//     auto grid = GridData();
-//     grid.bottomLeft = cfg.bottomLeft;
-//     grid.topRight = cfg.topRight;
+        if (aLine.empty() || aLine.find("//") == 0) { // Ignore empty lines and comments
+            continue;
+        } else if (aLine.find("Grid") != std::string::npos) { // Extract grid range
+            std::string extractFailReason = "";
+            bool isRangeX;
 
-//     grid.arr = new int *[width];
-//     for (int x = 0; x < width; x++) {
-//         grid.arr[x] = new int[height];
-//         for (int y = 0; y < height; y++) {
-//             grid.arr[x][y] = 0;
-//         }
-//     }
+            const bool extractSuccess = DataLoader::ExtractGridRange(aLine, newGridData, isRangeX, extractFailReason);
+            if (!extractSuccess) {
+                parseFailReason = extractFailReason;
+                return false;
+            }
 
-//     for (const std::string &datum : cityLocationData) { // (e.g datum = [3, 5]-3-Big_City)
-//         const std::vector<std::string> &splitData = Utils::StrSplit(datum, '-');
-//         const int cityType = std::stoi(splitData[1]);
+            if (isRangeX) {
+                rangeXInitialized = true;
+            } else {
+                rangeYInitialized = true;
+            }
+        } else if (aLine.find("citylocation.txt") != std::string::npos) {
+            std::string readFailReason = "";
+            const bool readSuccess = DataLoader::ReadCityTextFile(aLine, newGridData, readFailReason);
+            if (!readSuccess) {
+                parseFailReason = readFailReason;
+                return false;
+            }
+            std::cout << "Successfully parsed city locations..." << std::endl;
+        } else if (aLine.find("cloudcover.txt") != std::string::npos) {
+        } else if (aLine.find("pressure.txt") != std::string::npos) {
+        }
+    }
+    std::cout << "Range X Initialized: " << rangeXInitialized << std::endl;
+    std::cout << "Range Y Initialized: " << rangeYInitialized << std::endl;
+    std::cout << "Arrays Initialized: " << arraysInitialized << std::endl;
+    std::cout << "City Initialized: " << cityInitialized << std::endl;
+    std::cout << "Cloud Initialized: " << cloudInitialized << std::endl;
+    std::cout << "Pressure Initialized: " << pressureInitialized << std::endl;
 
-//         std::string locStr = splitData[0];              // Extract location info (e.g [23, 9])
-//         locStr = locStr.substr(1, locStr.length() - 2); // Remove the '[' and ']' chars
-//         const std::vector<std::string> locData = Utils::StrSplit(locStr, ',');
-//         const int posX = std::stoi(locData[0]);
-//         const int posY = std::stoi(locData[1]);
-//         grid.arr[posX][posY] = cityType;
+    // if (!rangeXInitialized || !rangeYInitialized || !arraysInitialized ||
+    //     !cityInitialized || !cloudInitialized || !pressureInitialized) {
+    //     // TODO: Descriptive error message
+    //     return false;
+    // }
 
-//         const std::string cityName = splitData[2];
-//         refCityLookupTable[cityType] = cityName;
-//     }
-//     return grid;
-// }
+    gridData = newGridData;
+    gridData.isDataLoaded = true;
+    inFile.close();
 
-// GridData DataLoader::LoadGenericData(const std::vector<std::string> &genericData, const ConfigData &cfg) {
-//     const int width = (cfg.topRight.x - cfg.bottomLeft.x) + 1;
-//     const int height = (cfg.topRight.y - cfg.bottomLeft.y) + 1;
+    // DEBUG
+    // std::cout << "Range X: " << newGridData.bottomLeft.x << ", " << newGridData.topRight.x << std::endl;
+    // std::cout << "Range Y: " << newGridData.bottomLeft.y << ", " << newGridData.topRight.y << std::endl;
+    // const int rangeX = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
+    // const int rangeY = (gridData.topRight.y - gridData.bottomLeft.y) + 1;
+    // for (int y = 0; y < rangeY; y++) {
+    //     for (int x = 0; x < rangeX; x++) {
+    //         std::cout << gridData.cityGrid[x][y] << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 
-//     auto grid = GridData();
-//     grid.bottomLeft = cfg.bottomLeft;
-//     grid.topRight = cfg.topRight;
+    return true;
+}
 
-//     grid.arr = new int *[width];
-//     for (int x = 0; x < width; x++) {
-//         grid.arr[x] = new int[height];
-//         for (int y = 0; y < height; y++) {
-//             grid.arr[x][y] = 0;
-//         }
-//     }
+bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridData, bool &isRangeX, std::string &extractFailReason) {
+    // Validate number of tokens
+    // [0] - GridX_IdxRange | [1] - 0-8
+    int tokenCount = 0;
+    std::string *const allTokens = Utils::TokenizeString(rangeLine, "=", tokenCount);
+    if (tokenCount != 2) {
+        std::ostringstream oss;
+        oss << "=== Extract Grid Range Error ===" << std::endl;
+        oss << "Line is in wrong format: " << rangeLine << std::endl;
+        extractFailReason = oss.str();
 
-//     for (const std::string &datum : genericData) { // Example Datum: [7, 4]-34
-//         const std::vector<std::string> &splitData = Utils::StrSplit(datum, '-');
+        delete[] allTokens;
+        return false;
+    }
 
-//         std::string locStr = splitData[0];              // Extract location info (e.g [23, 9])
-//         locStr = locStr.substr(1, locStr.length() - 2); // Remove the '[' and ']' chars
-//         const std::vector<std::string> locData = Utils::StrSplit(locStr, ',');
-//         const int posX = std::stoi(locData[0]);
-//         const int posY = std::stoi(locData[1]);
-//         const int indexValue = std::stoi(splitData[1]);
+    // Validate information before "="
+    const std::string beforeEquals = allTokens[0];
+    if (beforeEquals == "GridX_IdxRange") {
+        isRangeX = true;
+    } else if (beforeEquals == "GridY_IdxRange") {
+        isRangeX = false;
+    } else {
+        std::ostringstream oss;
+        oss << "=== Extract Grid Range Error ===" << std::endl;
+        oss << "Line is in wrong format: " << beforeEquals << std::endl;
+        extractFailReason = oss.str();
 
-//         grid.arr[posX][posY] = indexValue;
-//     }
-//     return grid;
-// }
+        delete[] allTokens;
+        return false;
+    }
+
+    // Validate number of "range" tokens
+    // [0] - 0 | [1] - 8
+    const std::string afterEquals = allTokens[1];
+    int rangeTokenCount = 0;
+    std::string *const rangeTokens = Utils::TokenizeString(afterEquals, "-", rangeTokenCount);
+    if (rangeTokenCount != 2) {
+        std::ostringstream oss;
+        oss << "=== Extract Grid Range Error ===" << std::endl;
+        oss << "Line is in wrong format: " << afterEquals << std::endl;
+        extractFailReason = oss.str();
+
+        delete[] rangeTokens;
+        delete[] allTokens;
+        return false;
+    }
+
+    // Extract int from the 'minmaxTokens' string
+    int min = 0, max = 0;
+    try {
+        min = std::stoi(rangeTokens[0]);
+        max = std::stoi(rangeTokens[1]);
+    } catch (const std::exception &e) {
+        std::ostringstream oss;
+        oss << "=== Extract Grid Range Error ===" << std::endl;
+        oss << "Line is in wrong format: " << afterEquals << std::endl;
+        extractFailReason = oss.str();
+        return false;
+    }
+
+    // int of min and max have been extracted - save to gridData
+    if (isRangeX) {
+        gridData.bottomLeft.x = min;
+        gridData.topRight.x = max;
+    } else {
+        gridData.bottomLeft.y = min;
+        gridData.topRight.y = max;
+    }
+    delete[] rangeTokens;
+    delete[] allTokens;
+    return true;
+}
+
+bool DataLoader::ReadCityTextFile(const std::string &filePath, GridData &gridData, std::string &readFailReason) {
+    std::ifstream cityDataFile(filePath);
+    if (!cityDataFile.is_open()) {
+        readFailReason = "Failed to open file: " + filePath;
+        return false;
+    }
+
+    std::string aLine;
+    while (std::getline(cityDataFile, aLine)) {
+        std::string extractFailReason = "";
+        const bool extractSuccess = DataLoader::ExtractCityDataLine(aLine, gridData, extractFailReason);
+        if (!extractSuccess) {
+            readFailReason = extractFailReason;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &gridData, std::string &extractFailReason) {
+    // Tokenize string - check correct number of tokens
+    int tokenCount = 0;
+    std::string *const allTokens = Utils::TokenizeString(cityLine, "-", tokenCount);
+    if (tokenCount != 3) {
+        std::ostringstream oss;
+        oss << "=== Extracting city data failure ===" << std::endl;
+        oss << "Following line doesnt adhere to format: " << std::endl;
+        oss << cityLine << std::endl;
+        extractFailReason = oss.str();
+
+        delete[] allTokens;
+        return false;
+    }
+
+    // Try to extract the x and y coordinates from the string
+    int minCoord = 0, maxCoord = 0;
+    {
+        int coordCount = 0;
+        std::string *const coordTokens = Utils::TokenizeString(allTokens[0], ",", coordCount, true);
+
+        // E.g
+        // [0] = "[0"
+        // [1] = "8]"
+        if (coordCount != 2) {
+            std::ostringstream oss;
+            oss << "=== Extracting city data failure ===" << std::endl;
+            oss << "Following part of the city data line doesn't adhere to format (wrong token count): " << allTokens[0] << std::endl;
+            extractFailReason = oss.str();
+
+            delete[] coordTokens;
+            delete[] allTokens;
+            return false;
+        }
+
+        // The coord tokens should start and end with '[' and ']' respectively
+        std::string minCoordStr = coordTokens[0], maxCoordStr = coordTokens[1];
+        if (minCoordStr[0] != '[' || maxCoordStr[maxCoordStr.length() - 1] != ']') {
+            std::ostringstream oss;
+            oss << "=== Extracting city data failure ===" << std::endl;
+            oss << "Following part of the city data line doesn't adhere to format (missing brackets): " << allTokens[0] << std::endl;
+            extractFailReason = oss.str();
+
+            delete[] coordTokens;
+            delete[] allTokens;
+            return false;
+        }
+
+        // Actual extraction of the coordX and coordY from the string
+        try {
+            minCoordStr.erase(0, 1);
+            maxCoordStr.pop_back();
+            minCoord = std::stoi(minCoordStr);
+            maxCoord = std::stoi(maxCoordStr);
+        } catch (const std::exception &e) {
+            std::ostringstream oss;
+            oss << "=== Extracting city data failure ===" << std::endl;
+            oss << e.what() << std::endl;
+            extractFailReason = oss.str();
+
+            delete[] coordTokens;
+            delete[] allTokens;
+            return false;
+        }
+
+        // CoordX and CoordY extracted - check if they are out of bounds
+        // NOTE: This part of the code assumes that the gridData.bottomLeft and gridData.topRight is already initialized
+        if (minCoord < gridData.bottomLeft.x || minCoord > gridData.topRight.x ||
+            maxCoord < gridData.bottomLeft.y || maxCoord > gridData.topRight.y) {
+            std::ostringstream oss;
+            oss << "=== Extracting city data failure ===" << std::endl;
+            oss << "Coordinates from the following line are out of range: " << cityLine << std::endl;
+            oss << "Actual range X: " << gridData.bottomLeft.x << ", " << gridData.topRight.x << std::endl;
+            oss << "Actual range Y: " << gridData.bottomLeft.y << ", " << gridData.topRight.y << std::endl;
+            extractFailReason = oss.str();
+
+            delete[] coordTokens;
+            delete[] allTokens;
+            return false;
+        }
+        delete[] coordTokens;
+    }
+
+    // Try to extract the city ID and name, and save it
+    int cityID = 0;
+    try {
+        // As it was unspecified, I'm only going to allow city ID's within the range of 0 to 9
+        // Because higher ID's mess with the grid rendering
+        cityID = std::stoi(allTokens[1]);
+        if (cityID < 0 || cityID > MAX_CITY_ID) {
+            std::ostringstream oss;
+            oss << "=== Extracting city data failure ===" << std::endl;
+            oss << "Following line in file clashes with data saved from previous line:" << std::endl;
+            oss << cityLine;
+            Utils::PrintNewlines(2, oss);
+            extractFailReason = oss.str();
+
+            delete[] allTokens;
+            return false;
+        }
+
+        // Check for conflicts
+        //
+        // If the new 'city name' associated with a 'city ID' clashes
+        // with what currently exists in the 'cityNames' array/map
+        const std::string newCityName = allTokens[2];
+        const std::string currCityName = gridData.cityNames[cityID];
+        if (!currCityName.empty() && currCityName != newCityName) {
+            std::ostringstream oss;
+            oss << "=== Extracting city data failure ===" << std::endl;
+            oss << "Following line in file clashes with data saved from previous line: " << std::endl;
+            oss << cityLine;
+            Utils::PrintNewlines(2, oss);
+            extractFailReason = oss.str();
+
+            delete[] allTokens;
+            return false;
+        }
+    } catch (const std::exception &e) {
+        std::ostringstream oss;
+        oss << "=== Extracting city data failure ===" << std::endl;
+        oss << e.what() << std::endl;
+        extractFailReason = oss.str();
+
+        delete[] allTokens;
+        return false;
+    }
+
+    // The actual saving of the data into the "gridData" reference
+    gridData.cityGrid[minCoord][maxCoord] = cityID;
+
+    delete[] allTokens;
+    return true;
+}

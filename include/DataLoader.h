@@ -1,16 +1,14 @@
 #ifndef DATA_LOADER_H
 #define DATA_LOADER_H
 
+#include "Declarations.h"
+#include <string>
+
 namespace DataLoader {
-    // /**
-    //  * @return The data from the config file, bundled into a 'ConfigDataStatus' struct
-    //  */
-    // ConfigDataStatus GetConfigData(const std::string &filePath);
-    // GridData LoadCityLocations(
-    //     const std::vector<std::string> &cityLocationData,
-    //     const ConfigData &cfg,
-    //     std::map<int, std::string> &refCityLookupTable);
-    // GridData LoadGenericData(const std::vector<std::string> &genericData, const ConfigData &cfg);
+    bool ParseFile(const std::string &filePath, GridData &gridData, std::string &parseFailReason);
+    bool ExtractGridRange(const std::string &rangeLine, GridData &gridData, bool &isRangeX, std::string &extractFailReason);
+    bool ReadCityTextFile(const std::string &filePath, GridData &gridData, std::string &readFailReason);
+    bool ExtractCityDataLine(const std::string &cityLine, GridData &gridData, std::string &extractFailReason);
 } // namespace DataLoader
 
 #endif
