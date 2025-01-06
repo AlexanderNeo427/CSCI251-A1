@@ -15,6 +15,7 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
 
     std::string aLine;
     while (std::getline(inFile, aLine)) {
+
         // Once we have extracted the "X" and "Y" minmax range, but have yet to initialize the arrays...
         // Init the arrays here
         if (rangeXInitialized && rangeYInitialized && !arraysInitialized) {
@@ -37,6 +38,8 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
                 }
             }
             arraysInitialized = true;
+            Utils::PrintNewlines(1);
+            std::cout << "Storing data from input file: " << std::endl;
         }
 
         if (aLine.empty() || aLine.find("//") == 0) { // Ignore empty lines and comments
@@ -64,6 +67,7 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
                 return false;
             }
             cityInitialized = true;
+            std::cout << aLine << ".... done!" << std::endl;
         } else if (aLine.find("cloudcover.txt") != std::string::npos) {
             std::string readFailReason = "";
             const bool readSuccess = DataLoader::ReadGenericTextFile(aLine, newGridData, readFailReason, true);
@@ -72,6 +76,7 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
                 return false;
             }
             cloudInitialized = true;
+            std::cout << aLine << ".... done!" << std::endl;
         } else if (aLine.find("pressure.txt") != std::string::npos) {
             std::string readFailReason = "";
             const bool readSuccess = DataLoader::ReadGenericTextFile(aLine, newGridData, readFailReason, false);
@@ -80,6 +85,7 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
                 return false;
             }
             pressureInitialized = true;
+            std::cout << aLine << ".... done!" << std::endl;
         }
     }
     // std::cout << "Range X Initialized: " << rangeXInitialized << std::endl;
@@ -98,29 +104,6 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
     gridData = newGridData;
     gridData.isDataLoaded = true;
     inFile.close();
-
-    // DEBUG
-    // std::cout << "==== CITY GRID ====" << std::endl;
-    // std::cout << "Range X: " << newGridData.bottomLeft.x << ", " << newGridData.topRight.x << std::endl;
-    // std::cout << "Range Y: " << newGridData.bottomLeft.y << ", " << newGridData.topRight.y << std::endl;
-    // const int rangeX = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
-    // const int rangeY = (gridData.topRight.y - gridData.bottomLeft.y) + 1;
-    // for (int i = 0; i < 3; i++) {
-    //     for (int y = 0; y < rangeY; y++) {
-    //         for (int x = 0; x < rangeX; x++) {
-    //             if (i == 0) {
-    //                 std::cout << gridData.cityGrid[x][y] << " ";
-    //             } else if (i == 1) {
-    //                 std::cout << gridData.cloudGrid[x][y] << " ";
-    //             } else if (i == 2) {
-    //                 std::cout << gridData.pressureGrid[x][y] << " ";
-    //             }
-    //         }
-    //         std::cout << std::endl;
-    //     }
-    //     Utils::PrintNewlines(2);
-    // }
-
     return true;
 }
 
@@ -188,9 +171,11 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
     if (isRangeX) {
         gridData.bottomLeft.x = min;
         gridData.topRight.x = max;
+        std::cout << "Reading in GridX_IdxRange: " << min << "-" << max << "... done!" << std::endl;
     } else {
         gridData.bottomLeft.y = min;
         gridData.topRight.y = max;
+        std::cout << "Reading in GridY_IdxRange: " << min << "-" << max << "... done!" << std::endl;
     }
     delete[] rangeTokens;
     delete[] allTokens;
@@ -345,6 +330,17 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
     }
 
     // The actual saving of the data into the "gridData" reference
+    if (xCoord < gridData.bottomLeft.x || xCoord > gridData.topRight.x ||
+        yCoord < gridData.bottomLeft.x || yCoord > gridData.topRight.y) {
+        std::ostringstream oss;
+        oss << "=== Extract city data failure ===" << std::endl;
+        oss << "Following XY coord is out of grid range: " << xCoord << ", " << yCoord << std::endl;
+        extractFailReason = oss.str();
+
+        delete[] allTokens;
+        return false;
+    }
+
     const int xAdjusted = xCoord - gridData.bottomLeft.x;
     const int yAdjusted = yCoord - gridData.bottomLeft.y;
     gridData.cityGrid[xAdjusted][yAdjusted] = cityID;
@@ -423,7 +419,6 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
         try {
             xCoord = std::stoi(xCoordStr);
             yCoord = std::stoi(yCoordStr);
-
         } catch (const std::exception &e) {
             std::ostringstream oss;
             oss << "=== Extract " << cloudOrPressure << " data failure ===" << std::endl;
@@ -447,8 +442,18 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
             return false;
         }
     }
+ 
+    if (xCoord < gridData.bottomLeft.x || xCoord > gridData.topRight.x ||
+        yCoord < gridData.bottomLeft.x || yCoord > gridData.topRight.y) {
+        std::ostringstream oss;
+        oss << "=== Extract " << cloudOrPressureStr << " data failure ===" << std::endl;
+        oss << "Following XY coord is out of grid range: " << xCoord << ", " << yCoord << std::endl;
+        extractFailReason = oss.str();
 
-    // std::cout << xCoord << ", " << yCoord << ": " << cellValue << std::endl;
+        delete[] allTokens;
+        return false;
+    }
+
     // Set the extracted coordinate value with the extracted value for that grid cell
     const int xAdjusted = xCoord - gridData.bottomLeft.x;
     const int yAdjusted = yCoord - gridData.bottomLeft.y;

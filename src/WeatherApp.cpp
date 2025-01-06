@@ -1,7 +1,7 @@
 #include "WeatherApp.h"
 #include "DataLoader.h"
-#include "GridRenderer.h"
 #include "Input.h"
+#include "Renderer.h"
 #include "Utils.h"
 #include <iostream>
 
@@ -37,7 +37,7 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
             break;
         }
         case MENU_OPTION::DISPLAY_CITY_MAP: {
-            GridRenderer::RenderGrid(gridData.cityGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::CITY);
+            Renderer::RenderGrid(gridData.cityGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::CITY);
             break;
         }
         case MENU_OPTION::COVERAGE_MAP_IDX: {

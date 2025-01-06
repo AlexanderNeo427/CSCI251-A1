@@ -1,7 +1,6 @@
 #include "Input.h"
 #include "Utils.h"
 #include "WeatherApp.h"
-
 #include <iostream>
 
 int main() {
@@ -38,6 +37,7 @@ int main() {
         WeatherApp::HandleOption(chosenOption, gridData);
     }
 
+    // Cleanup
     if (gridData.isDataLoaded) {
         const int rangeX = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
         for (int x = 0; x < rangeX; x++) {
