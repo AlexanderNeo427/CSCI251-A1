@@ -6,7 +6,7 @@
 #include <utility>
 
 using CityID = int;
-const int MAX_CITY_ID = 99;
+const int CITY_ID_COUNT = 100;
 
 namespace ANSI {
     using Color = std::string;
@@ -20,11 +20,24 @@ namespace ANSI {
     const ANSI::Color WHITE = "\033[37m";
 }; // namespace ANSI
 
+const std::array<ANSI::Color, 10> INDEX_COLOURS = {
+    ANSI::RED,
+    ANSI::GREEN,
+    ANSI::YELLOW,
+    ANSI::BLUE,
+    ANSI::CYAN,
+    ANSI::RED,
+    ANSI::GREEN,
+    ANSI::YELLOW,
+    ANSI::BLUE,
+    ANSI::CYAN,
+};
+
 enum class MENU_OPTION : unsigned int {
     PROCESS_CONFIG_FILE,
     DISPLAY_CITY_MAP,
-    COVERAGE_MAP_IDX,
-    COVERAGE_MAP_LMH,
+    CLOUD_MAP_IDX,
+    CLOUD_MAP_LMH,
     ATMOS_PRESSURE_IDX,
     ATMOS_PRESSURE_LMH,
     SUMMARY_REPORT,
@@ -39,14 +52,12 @@ enum class RENDER_MODE : unsigned int {
     LMH,
 };
 
-// enum class GRID_TYPE : unsigned int {
-//     CITY,
-//     COVERAGE,
-//     PRESSURE
-// };
-
 struct Vec2D {
     int x = 0, y = 0;
+};
+
+struct Boundary {
+    Vec2D min, max;
 };
 
 struct GridData {
@@ -56,14 +67,14 @@ struct GridData {
     // [3] = "Big_city"
     // [4] = ""
     // etc.....
-    std::array<std::string, MAX_CITY_ID> cityNames;
+    std::array<std::string, CITY_ID_COUNT> cityNames;
 
     bool isDataLoaded;
     Vec2D bottomLeft, topRight;
     int **cityGrid, **cloudGrid, **pressureGrid;
 
     GridData()
-        : cityNames({}), isDataLoaded(false),
+        : cityNames(), isDataLoaded(false),
           bottomLeft(), topRight(),
           cityGrid(nullptr), cloudGrid(nullptr), pressureGrid(nullptr) {}
 

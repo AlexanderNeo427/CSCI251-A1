@@ -1,20 +1,31 @@
 #ifndef SUMMARY_REPORT_H
 #define SUMMARY_REPORT_H
 
+#include "Declarations.h"
+
 namespace SummaryReport {
-    // std::vector<Vec2D> WithSurroundingGridArea(const std::vector<Vec2D> &posVec, const Vec2D &bottomLeft, const Vec2D &topRight);
-    // float ComputeGridAverage(const GridData &gridData, const std::vector<Vec2D> &positions);
+    void GenerateSummaryReport(const GridData &gridData);
+
+    /**
+     * @param cityBounds City Boundary in 'grid space'
+     * @param gridBounds Grid Boundary in 'grid space'
+     */
+    Boundary ExpandedBoundary(const Boundary &cityBounds, const Boundary &gridBounds);
+
+    /**
+     * @param cityData
+     * @param gridBounds Boundary of the entire grid, in 'grid space'
+     * @param cityID
+     */
+    Boundary GetCityBounds(int **const cityData, const Boundary &gridBounds, const CityID cityID);
+
+    /**
+     * @param areaToAverage Boundary (in 'grid space') of the grid area to average over
+     */
+    double ComputeGridAverage(int **const data, const Boundary &areaToAverage);
     void PrintAscii(const char avgPressureLMH, const char avgCoverageLMH);
     int ComputeRainProbability(const char avgPressureLMH, const char avgCoverageLMH);
-    // std::map<CityID, std::vector<Vec2D>> GetAllCityPositions(const GridData &cityGrid);
-
-    // /**
-    //  * @param allGrids Read-only reference
-    //  * @param cityLookupTable Read-only reference
-    //  */
-    // void GenerateSummaryReport(
-    //     const std::map<GRID_TYPE, GridData> &allGrids,
-    //     const std::map<CityID, std::string> &cityLookupTable);
-} // namespace SummaryReport
+    char GetLMH(const int val);
+}; // namespace SummaryReport
 
 #endif

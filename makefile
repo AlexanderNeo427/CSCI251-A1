@@ -17,7 +17,7 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET = $(BUILD_DIR)/main
 
 # Default Target
-all: $(TARGET)
+all: $(TARGET) run
 
 # Build Executable
 $(TARGET): $(OBJECTS)
@@ -32,5 +32,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 clean:
 	rm -rf $(BUILD_DIR)
 
+# Run Target
+run:
+	@$(TARGET)
+
 # Phony Targets
-.PHONY: all clean
+.PHONY: all clean run

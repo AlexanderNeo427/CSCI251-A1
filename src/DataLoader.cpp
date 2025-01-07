@@ -287,13 +287,11 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
     // Try to extract the city ID and name, and save it
     int cityID = 0;
     try {
-        // As it was unspecified, I'm only going to allow city ID's within the range of 0 to 9
-        // Because higher ID's mess with the grid rendering
         cityID = std::stoi(allTokens[1]);
-        if (cityID < 0 || cityID >= MAX_CITY_ID) {
+        if (cityID < 0 || cityID >= CITY_ID_COUNT) {
             std::ostringstream oss;
             oss << "=== Extracting city data failure ===" << std::endl;
-            oss << "City ID out of range (0-" << (MAX_CITY_ID - 1) << "): " << std::endl;
+            oss << "City ID out of range (0-" << (CITY_ID_COUNT - 1) << "): " << std::endl;
             oss << cityLine;
             Utils::PrintNewlines(2, oss);
             extractFailReason = oss.str();
@@ -311,14 +309,16 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
         if (!currCityName.empty() && currCityName != newCityName) {
             std::ostringstream oss;
             oss << "=== Extracting city data failure ===" << std::endl;
-            oss << "Following line in file clashes with data saved from previous line: " << std::endl;
-            oss << cityLine;
+            oss << "Attempting to override existing city name with new name: " << cityLine << std::endl;
             Utils::PrintNewlines(2, oss);
             extractFailReason = oss.str();
 
             delete[] allTokens;
             return false;
         }
+
+        // Actual saving of the city ID into the array
+        gridData.cityNames[cityID] = newCityName;
     } catch (const std::exception &e) {
         std::ostringstream oss;
         oss << "=== Extracting city data failure ===" << std::endl;
@@ -442,7 +442,7 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
             return false;
         }
     }
- 
+
     if (xCoord < gridData.bottomLeft.x || xCoord > gridData.topRight.x ||
         yCoord < gridData.bottomLeft.x || yCoord > gridData.topRight.y) {
         std::ostringstream oss;

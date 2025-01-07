@@ -63,8 +63,14 @@ IntInputStatus Input::AwaitIntInput(const std::string &prompt) {
         retStatus.message = e.what();
         return retStatus;
     }
-
     retStatus.success = false;
-    retStatus.message = "Should not be here";
+    retStatus.message = "This is not good. This is really not good.";
     return retStatus;
+}
+
+void Input::AwaitEnterInput(const std::string& prompt) {
+    if (!prompt.empty()) {
+        std::cout << prompt;
+    }
+    std::cin.get();
 }

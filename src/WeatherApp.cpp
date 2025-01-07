@@ -2,14 +2,16 @@
 #include "DataLoader.h"
 #include "Input.h"
 #include "Renderer.h"
+#include "SummaryReport.h"
 #include "Utils.h"
 #include <iostream>
 
 void WeatherApp::PrintMainMenu() {
-    std::cout << ANSI::BLUE << std::endl;
+    std::cout << ANSI::CYAN << std::endl;
+    std::cout << "----------------------------" << std::endl;
     std::cout << "Student ID:   9085610" << std::endl;
     std::cout << "Student Name: Alexander Neo" << std::endl;
-    std::cout << "---------------------------" << std::endl;
+    std::cout << "----------------------------" << std::endl;
     std::cout << ANSI::DEFAULT;
     std::cout << "Welcome to Weather Information Processing System!";
     Utils::PrintNewlines(2);
@@ -33,26 +35,39 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
                 std::cerr << failReason << std::endl;
                 break;
             }
+            Utils::PrintNewlines(1);
+            Input::AwaitEnterInput();
             std::cout << "All records successfully stored. Going back to main menu..." << std::endl;
             break;
         }
         case MENU_OPTION::DISPLAY_CITY_MAP: {
             Renderer::RenderGrid(gridData.cityGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::CITY);
+            Input::AwaitEnterInput();
             break;
         }
-        case MENU_OPTION::COVERAGE_MAP_IDX: {
+        case MENU_OPTION::CLOUD_MAP_IDX: {
+            Renderer::RenderGrid(gridData.cloudGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::INDEX);
+            Input::AwaitEnterInput();
             break;
         }
-        case MENU_OPTION::COVERAGE_MAP_LMH: {
+        case MENU_OPTION::CLOUD_MAP_LMH: {
+            Renderer::RenderGrid(gridData.cloudGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::LMH);
+            Input::AwaitEnterInput();
             break;
         }
         case MENU_OPTION::ATMOS_PRESSURE_IDX: {
+            Renderer::RenderGrid(gridData.pressureGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::INDEX);
+            Input::AwaitEnterInput();
             break;
         }
         case MENU_OPTION::ATMOS_PRESSURE_LMH: {
+            Renderer::RenderGrid(gridData.pressureGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::LMH);
+            Input::AwaitEnterInput();
             break;
         }
         case MENU_OPTION::SUMMARY_REPORT: {
+            SummaryReport::GenerateSummaryReport(gridData);
+            Input::AwaitEnterInput();
             break;
         }
         default:
@@ -66,9 +81,9 @@ std::string WeatherApp::OptionToText(const MENU_OPTION menuOption) {
             return "Read in and process a configuration file";
         case MENU_OPTION::DISPLAY_CITY_MAP:
             return "Display city map";
-        case MENU_OPTION::COVERAGE_MAP_IDX:
+        case MENU_OPTION::CLOUD_MAP_IDX:
             return "Display coverage map (cloudiness index)";
-        case MENU_OPTION::COVERAGE_MAP_LMH:
+        case MENU_OPTION::CLOUD_MAP_LMH:
             return "Display coverage map (LMH symbols)";
         case MENU_OPTION::ATMOS_PRESSURE_IDX:
             return "Display atmospheric pressure (pressure index)";

@@ -1,17 +1,6 @@
 #include "Utils.h"
 #include <sstream>
 
-char Utils::GetLMH(const float val) {
-    if (val >= 0 && val < 35) {
-        return 'L';
-    } else if (val >= 35 && val < 65) {
-        return 'M';
-    } else if (val >= 65 && val < 100) {
-        return 'H';
-    }
-    return '-';
-}
-
 void Utils::PrintNewlines(const int numLines, std::ostream &os) {
     for (int i = 0; i < numLines; i++) {
         os << std::endl;
