@@ -7,6 +7,9 @@ void SummaryReport::GenerateSummaryReport(const GridData &gridData) {
     gridBoundary.min = gridData.bottomLeft;
     gridBoundary.max = gridData.topRight;
 
+    std::cout << ANSI::DEFAULT;
+    std::cout << "Weather Forecast Summary Report" << std::endl;
+    std::cout << "-------------------------------" << std::endl;
     for (CityID cityID = CITY_ID_COUNT - 1; cityID >= 0; cityID--) {
         const std::string cityName = gridData.cityNames[cityID];
         if (cityName.empty()) {
@@ -28,15 +31,15 @@ void SummaryReport::GenerateSummaryReport(const GridData &gridData) {
             const Boundary expandedBoundary = SummaryReport::ExpandedBoundary(cityBounds, gridBoundary);
 
             std::cout << ANSI::YELLOW << std::setw(weatherDataWidth) << std::left << "Ave. Cloud Cover (ACC): ";
-            const double avgCloudCover = SummaryReport::ComputeGridAverage(gridData.cityGrid, expandedBoundary);
+            const double avgCloudCover = SummaryReport::ComputeGridAverage(gridData.cloudGrid, expandedBoundary, gridBoundary);
             const char cloudCoverLMH = SummaryReport::GetLMH(avgCloudCover);
             std::cout << ANSI::DEFAULT << std::fixed << std::setprecision(2) << std::setw(4) << avgCloudCover;
             std::cout << " (" << cloudCoverLMH << ")" << std::endl;
 
             std::cout << ANSI::YELLOW << std::setw(weatherDataWidth) << std::left << "Ave. Pressure (AP): ";
-            const double avgPressure = SummaryReport::ComputeGridAverage(gridData.cityGrid, expandedBoundary);
+            const double avgPressure = SummaryReport::ComputeGridAverage(gridData.pressureGrid, expandedBoundary, gridBoundary);
             const char pressureLMH = SummaryReport::GetLMH(avgPressure);
-            std::cout << ANSI::DEFAULT << std::fixed << std::setprecision(2) << std::setw(4) << avgCloudCover;
+            std::cout << ANSI::DEFAULT << std::fixed << std::setprecision(2) << std::setw(4) << avgPressure;
             std::cout << " (" << pressureLMH << ")" << std::endl;
 
             std::cout << ANSI::CYAN << std::setw(weatherDataWidth) << std::left << "Probability of Rain (%): ";
@@ -82,13 +85,13 @@ Boundary SummaryReport::GetCityBounds(int **const cityData, const Boundary &grid
     return cityBounds;
 }
 
-double SummaryReport::ComputeGridAverage(int **const data, const Boundary &areaToAverage) {
+double SummaryReport::ComputeGridAverage(int **const data, const Boundary &areaToAverage, const Boundary &gridBounds) {
     double sum = 0;
     int numValues = 0;
-    for (int x_gridSpace = areaToAverage.min.x; x_gridSpace <= areaToAverage.max.x; x_gridSpace++) {
-        for (int y_gridSpace = areaToAverage.min.y; y_gridSpace <= areaToAverage.max.y; y_gridSpace++) {
-            const int x_arrSpace = x_gridSpace - areaToAverage.min.x;
-            const int y_arrSpace = y_gridSpace - areaToAverage.min.y;
+    for (int y_gridSpace = areaToAverage.max.y; y_gridSpace >= areaToAverage.min.y; y_gridSpace--) {
+        for (int x_gridSpace = areaToAverage.min.x; x_gridSpace <= areaToAverage.max.x; x_gridSpace++) {
+            const int x_arrSpace = x_gridSpace - gridBounds.min.x;
+            const int y_arrSpace = y_gridSpace - gridBounds.min.y;
             sum += data[x_arrSpace][y_arrSpace];
             numValues++;
         }
@@ -183,42 +186,3 @@ char SummaryReport::GetLMH(const int val) {
     }
     return '-';
 }
-
-// /**
-//  * @param allGrids Read-only reference
-//  * @param cityLookupTable Read-only reference
-//  */
-// void SummaryReport::GenerateSummaryReport(const std::map<GRID_TYPE, GridData> &allGrids, const std::map<CityID, std::string> &cityLookupTable) {
-//     std::cout << "Weather Forecast Summary Report" << std::endl;
-//     std::cout << "-------------------------------" << std::endl;
-
-//     const GridData &cityGridData = allGrids.at(GRID_TYPE::CITY);
-//     const std::map<CityID, std::vector<Vec2D>> allCityPositions = SummaryReport::GetAllCityPositions(cityGridData);
-
-//     for (const auto &data : allCityPositions) {
-//         const CityID cityID = data.first;
-//         const std::vector<Vec2D> &cityPositions = data.second;
-
-//         const std::vector<Vec2D> &positionsToAggregate = SummaryReport::WithSurroundingGridArea(
-//             cityPositions, cityGridData.bottomLeft, cityGridData.topRight);
-
-//         const GridData &cloudCoverageGrid = allGrids.at(GRID_TYPE::COVERAGE);
-//         const float avgCloudCover = SummaryReport::ComputeGridAverage(cloudCoverageGrid, positionsToAggregate);
-//         const char coverageLMH = Utils::GetLMH(avgCloudCover);
-
-//         const GridData &atmosPressureGrid = allGrids.at(GRID_TYPE::PRESSURE);
-//         const float avgPressure = SummaryReport::ComputeGridAverage(atmosPressureGrid, positionsToAggregate);
-//         const char pressureLMH = Utils::GetLMH(avgPressure);
-
-//         const int rainProbability = SummaryReport::ComputeRainProbability(pressureLMH, coverageLMH);
-//         std::cout << ANSI::DEFAULT;
-
-//         std::cout << "City Name: " << cityLookupTable.at(cityID) << std::endl;
-//         std::cout << "City ID: " << cityID << std::endl;
-//         std::cout << "Ave. Cloud Cover (ACC): " << avgCloudCover << " (" << coverageLMH << ")" << std::endl;
-//         std::cout << "Ave. Pressure (AP): " << avgPressure << " (" << pressureLMH << ")" << std::endl;
-//         std::cout << "Probability of Rain (%): " << std::to_string(rainProbability) << ".00" << std::endl;
-//         PrintAscii(pressureLMH, coverageLMH);
-//         std::cout << std::endl;
-//     }
-// }

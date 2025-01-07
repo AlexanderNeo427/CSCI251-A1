@@ -21,8 +21,9 @@ namespace SummaryReport {
 
     /**
      * @param areaToAverage Boundary (in 'grid space') of the grid area to average over
+     * @param gridBounds Boundary (in 'grid space') of the entire grid area
      */
-    double ComputeGridAverage(int **const data, const Boundary &areaToAverage);
+    double ComputeGridAverage(int **const data, const Boundary &areaToAverage, const Boundary &gridBounds);
     void PrintAscii(const char avgPressureLMH, const char avgCoverageLMH);
     int ComputeRainProbability(const char avgPressureLMH, const char avgCoverageLMH);
     char GetLMH(const int val);
