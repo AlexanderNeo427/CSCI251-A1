@@ -39,21 +39,7 @@ int main() {
 
     // Cleanup
     if (gridData.isDataLoaded) {
-        const int rangeX = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
-        for (int x = 0; x < rangeX; x++) {
-            delete[] gridData.cityGrid[x];
-            delete[] gridData.cloudGrid[x];
-            delete[] gridData.pressureGrid[x];
-            gridData.cityGrid[x] = nullptr;
-            gridData.cloudGrid[x] = nullptr;
-            gridData.pressureGrid[x] = nullptr;
-        }
-        delete[] gridData.cityGrid;
-        delete[] gridData.cloudGrid;
-        delete[] gridData.pressureGrid;
-        gridData.cityGrid = nullptr;
-        gridData.cloudGrid = nullptr;
-        gridData.pressureGrid = nullptr;
+        Utils::FreeMemory(gridData); 
     }
     return EXIT_SUCCESS;
 };

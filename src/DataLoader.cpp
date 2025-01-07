@@ -19,24 +19,7 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
         // Once we have extracted the "X" and "Y" minmax range, but have yet to initialize the arrays...
         // Init the arrays here
         if (rangeXInitialized && rangeYInitialized && !arraysInitialized) {
-            const int rangeX = (newGridData.topRight.x - newGridData.bottomLeft.x) + 1;
-            const int rangeY = (newGridData.topRight.y - newGridData.bottomLeft.y) + 1;
-
-            newGridData.cityGrid = new int *[rangeX];
-            newGridData.cloudGrid = new int *[rangeX];
-            newGridData.pressureGrid = new int *[rangeX];
-
-            for (int x = 0; x < rangeX; x++) {
-                newGridData.cityGrid[x] = new int[rangeY];
-                newGridData.cloudGrid[x] = new int[rangeY];
-                newGridData.pressureGrid[x] = new int[rangeY];
-
-                for (int y = 0; y < rangeY; y++) {
-                    newGridData.cityGrid[x][y] = 0;
-                    newGridData.cloudGrid[x][y] = 0;
-                    newGridData.pressureGrid[x][y] = 0;
-                }
-            }
+            Utils::AllocateMemory(newGridData);
             arraysInitialized = true;
             Utils::PrintNewlines(1);
             std::cout << "Storing data from input file: " << std::endl;
@@ -51,6 +34,9 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
             const bool extractSuccess = DataLoader::ExtractGridRange(aLine, newGridData, isRangeX, extractFailReason);
             if (!extractSuccess) {
                 parseFailReason = extractFailReason;
+                if (arraysInitialized) {
+                    Utils::FreeMemory(newGridData);
+                }
                 return false;
             }
 
@@ -64,6 +50,9 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
             const bool readSuccess = DataLoader::ReadCityTextFile(aLine, newGridData, readFailReason);
             if (!readSuccess) {
                 parseFailReason = readFailReason;
+                if (arraysInitialized) {
+                    Utils::FreeMemory(newGridData);
+                }
                 return false;
             }
             cityInitialized = true;
@@ -73,6 +62,9 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
             const bool readSuccess = DataLoader::ReadGenericTextFile(aLine, newGridData, readFailReason, true);
             if (!readSuccess) {
                 parseFailReason = readFailReason;
+                if (arraysInitialized) {
+                    Utils::FreeMemory(newGridData);
+                }
                 return false;
             }
             cloudInitialized = true;
@@ -82,6 +74,9 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
             const bool readSuccess = DataLoader::ReadGenericTextFile(aLine, newGridData, readFailReason, false);
             if (!readSuccess) {
                 parseFailReason = readFailReason;
+                if (arraysInitialized) {
+                    Utils::FreeMemory(newGridData);
+                }
                 return false;
             }
             pressureInitialized = true;
@@ -98,9 +93,15 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
     if (!rangeXInitialized || !rangeYInitialized || !arraysInitialized ||
         !cityInitialized || !cloudInitialized || !pressureInitialized) {
         std::cerr << "Something is not initialized properly..." << std::endl;
+        if (arraysInitialized) {
+            Utils::FreeMemory(newGridData);
+        }
         return false;
     }
 
+    if (gridData.isDataLoaded) {
+        Utils::FreeMemory(gridData);
+    }
     gridData = newGridData;
     gridData.isDataLoaded = true;
     inFile.close();
@@ -164,6 +165,20 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
         oss << "=== Extract Grid Range Error ===" << std::endl;
         oss << "Line is in wrong format: " << afterEquals << std::endl;
         extractFailReason = oss.str();
+
+        delete[] rangeTokens;
+        delete[] allTokens;
+        return false;
+    }
+
+    if (max < min) {
+        std::ostringstream oss;
+        oss << "=== Extract Grid Range Error ===" << std::endl;
+        oss << "Max is smaller than min in line: " << rangeLine << std::endl;
+        extractFailReason = oss.str(); 
+
+        delete[] rangeTokens;
+        delete[] allTokens;
         return false;
     }
 

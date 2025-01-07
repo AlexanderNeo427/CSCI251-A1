@@ -30,13 +30,11 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
 
             std::string failReason = "";
             const bool parseSuccess = DataLoader::ParseFile(fileName, gridData, failReason);
-
             if (!parseSuccess) {
                 std::cerr << failReason << std::endl;
                 break;
             }
             Utils::PrintNewlines(1);
-            Input::AwaitEnterInput();
             std::cout << "All records successfully stored. Going back to main menu..." << std::endl;
             break;
         }

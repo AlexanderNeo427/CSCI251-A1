@@ -40,3 +40,42 @@ std::string *Utils::TokenizeString(std::string str, const std::string &delimiter
     allTokens[index] = useTrim ? Utils::TrimString(str) : str; // Last token
     return allTokens;
 }
+
+void Utils::AllocateMemory(GridData &gridData) {
+    const int rangeX = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
+    const int rangeY = (gridData.topRight.y - gridData.bottomLeft.y) + 1;
+
+    gridData.cityGrid = new int *[rangeX];
+    gridData.cloudGrid = new int *[rangeX];
+    gridData.pressureGrid = new int *[rangeX];
+
+    for (int x = 0; x < rangeX; x++) {
+        gridData.cityGrid[x] = new int[rangeY];
+        gridData.cloudGrid[x] = new int[rangeY];
+        gridData.pressureGrid[x] = new int[rangeY];
+
+        for (int y = 0; y < rangeY; y++) {
+            gridData.cityGrid[x][y] = 0;
+            gridData.cloudGrid[x][y] = 0;
+            gridData.pressureGrid[x][y] = 0;
+        }
+    }
+}
+
+void Utils::FreeMemory(GridData &gridData) {
+    const int rangeX = (gridData.topRight.x - gridData.bottomLeft.x) + 1;
+    for (int x = 0; x < rangeX; x++) {
+        delete[] gridData.cityGrid[x];
+        delete[] gridData.cloudGrid[x];
+        delete[] gridData.pressureGrid[x];
+        gridData.cityGrid[x] = nullptr;
+        gridData.cloudGrid[x] = nullptr;
+        gridData.pressureGrid[x] = nullptr;
+    }
+    delete[] gridData.cityGrid;
+    delete[] gridData.cloudGrid;
+    delete[] gridData.pressureGrid;
+    gridData.cityGrid = nullptr;
+    gridData.cloudGrid = nullptr;
+    gridData.pressureGrid = nullptr;
+}
