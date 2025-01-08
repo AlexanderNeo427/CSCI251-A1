@@ -39,27 +39,37 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
             break;
         }
         case MENU_OPTION::DISPLAY_CITY_MAP: {
-            Renderer::RenderGrid(gridData.cityGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::CITY);
+            Renderer::RenderGrid(
+                gridData.cityGrid, gridData.cityNames,
+                gridData.bottomLeft, gridData.topRight, RENDER_MODE::CITY);
             Input::AwaitEnterInput();
             break;
         }
         case MENU_OPTION::CLOUD_MAP_IDX: {
-            Renderer::RenderGrid(gridData.cloudGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::INDEX);
+            Renderer::RenderGrid(
+                gridData.cloudGrid, gridData.cityNames,
+                gridData.bottomLeft, gridData.topRight, RENDER_MODE::INDEX);
             Input::AwaitEnterInput();
             break;
         }
         case MENU_OPTION::CLOUD_MAP_LMH: {
-            Renderer::RenderGrid(gridData.cloudGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::LMH);
+            Renderer::RenderGrid(
+                gridData.cloudGrid, gridData.cityNames,
+                gridData.bottomLeft, gridData.topRight, RENDER_MODE::LMH);
             Input::AwaitEnterInput();
             break;
         }
         case MENU_OPTION::ATMOS_PRESSURE_IDX: {
-            Renderer::RenderGrid(gridData.pressureGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::INDEX);
+            Renderer::RenderGrid(
+                gridData.pressureGrid, gridData.cityNames,
+                gridData.bottomLeft, gridData.topRight, RENDER_MODE::INDEX);
             Input::AwaitEnterInput();
             break;
         }
         case MENU_OPTION::ATMOS_PRESSURE_LMH: {
-            Renderer::RenderGrid(gridData.pressureGrid, gridData.bottomLeft, gridData.topRight, RENDER_MODE::LMH);
+            Renderer::RenderGrid(
+                gridData.pressureGrid, gridData.cityNames,
+                gridData.bottomLeft, gridData.topRight, RENDER_MODE::LMH);
             Input::AwaitEnterInput();
             break;
         }

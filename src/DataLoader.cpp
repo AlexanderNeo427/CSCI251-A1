@@ -83,12 +83,6 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
             std::cout << aLine << ".... done!" << std::endl;
         }
     }
-    // std::cout << "Range X Initialized: " << rangeXInitialized << std::endl;
-    // std::cout << "Range Y Initialized: " << rangeYInitialized << std::endl;
-    // std::cout << "Arrays Initialized: " << arraysInitialized << std::endl;
-    // std::cout << "City Initialized: " << cityInitialized << std::endl;
-    // std::cout << "Cloud Initialized: " << cloudInitialized << std::endl;
-    // std::cout << "Pressure Initialized: " << pressureInitialized << std::endl;
 
     if (!rangeXInitialized || !rangeYInitialized || !arraysInitialized ||
         !cityInitialized || !cloudInitialized || !pressureInitialized) {
@@ -112,7 +106,7 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
     // Validate number of tokens
     // [0] - GridX_IdxRange | [1] - 0-8
     int tokenCount = 0;
-    std::string *const allTokens = Utils::TokenizeString(rangeLine, "=", tokenCount);
+    std::string *allTokens = Utils::TokenizeString(rangeLine, "=", tokenCount);
     if (tokenCount != 2) {
         std::ostringstream oss;
         oss << "=== Extract Grid Range Error ===" << std::endl;
@@ -120,6 +114,7 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
         extractFailReason = oss.str();
 
         delete[] allTokens;
+        allTokens = nullptr;
         return false;
     }
 
@@ -136,6 +131,7 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
         extractFailReason = oss.str();
 
         delete[] allTokens;
+        allTokens = nullptr;
         return false;
     }
 
@@ -143,7 +139,7 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
     // [0] - 0 | [1] - 8
     const std::string afterEquals = allTokens[1];
     int rangeTokenCount = 0;
-    std::string *const rangeTokens = Utils::TokenizeString(afterEquals, "-", rangeTokenCount);
+    std::string *rangeTokens = Utils::TokenizeString(afterEquals, "-", rangeTokenCount);
     if (rangeTokenCount != 2) {
         std::ostringstream oss;
         oss << "=== Extract Grid Range Error ===" << std::endl;
@@ -152,6 +148,8 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
 
         delete[] rangeTokens;
         delete[] allTokens;
+        rangeTokens = nullptr;
+        allTokens = nullptr;
         return false;
     }
 
@@ -168,6 +166,8 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
 
         delete[] rangeTokens;
         delete[] allTokens;
+        rangeTokens = nullptr;
+        allTokens = nullptr;
         return false;
     }
 
@@ -175,10 +175,12 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
         std::ostringstream oss;
         oss << "=== Extract Grid Range Error ===" << std::endl;
         oss << "Max is smaller than min in line: " << rangeLine << std::endl;
-        extractFailReason = oss.str(); 
+        extractFailReason = oss.str();
 
         delete[] rangeTokens;
         delete[] allTokens;
+        rangeTokens = nullptr;
+        allTokens = nullptr;
         return false;
     }
 
@@ -194,6 +196,8 @@ bool DataLoader::ExtractGridRange(const std::string &rangeLine, GridData &gridDa
     }
     delete[] rangeTokens;
     delete[] allTokens;
+    rangeTokens = nullptr;
+    allTokens = nullptr;
     return true;
 }
 
@@ -219,7 +223,7 @@ bool DataLoader::ReadCityTextFile(const std::string &filePath, GridData &gridDat
 bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &gridData, std::string &extractFailReason) {
     // Tokenize string - check correct number of tokens
     int tokenCount = 0;
-    std::string *const allTokens = Utils::TokenizeString(cityLine, "-", tokenCount);
+    std::string *allTokens = Utils::TokenizeString(cityLine, "-", tokenCount);
     if (tokenCount != 3) {
         std::ostringstream oss;
         oss << "=== Extracting city data failure ===" << std::endl;
@@ -228,6 +232,7 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
         extractFailReason = oss.str();
 
         delete[] allTokens;
+        allTokens = nullptr;
         return false;
     }
 
@@ -235,7 +240,7 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
     int xCoord = 0, yCoord = 0;
     {
         int coordCount = 0;
-        std::string *const coordTokens = Utils::TokenizeString(allTokens[0], ",", coordCount, true);
+        std::string *coordTokens = Utils::TokenizeString(allTokens[0], ",", coordCount, true);
 
         // E.g
         // [0] = "[0"
@@ -248,6 +253,8 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
 
             delete[] coordTokens;
             delete[] allTokens;
+            coordTokens = nullptr;
+            allTokens = nullptr;
             return false;
         }
 
@@ -261,6 +268,8 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
 
             delete[] coordTokens;
             delete[] allTokens;
+            coordTokens = nullptr;
+            allTokens = nullptr;
             return false;
         }
 
@@ -278,6 +287,8 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
 
             delete[] coordTokens;
             delete[] allTokens;
+            coordTokens = nullptr;
+            allTokens = nullptr;
             return false;
         }
 
@@ -294,9 +305,12 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
 
             delete[] coordTokens;
             delete[] allTokens;
+            coordTokens = nullptr;
+            allTokens = nullptr;
             return false;
         }
         delete[] coordTokens;
+        coordTokens = nullptr;
     }
 
     // Try to extract the city ID and name, and save it
@@ -312,6 +326,7 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
             extractFailReason = oss.str();
 
             delete[] allTokens;
+            allTokens = nullptr;
             return false;
         }
 
@@ -321,14 +336,26 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
         // with what currently exists in the 'cityNames' array/map
         const std::string newCityName = allTokens[2];
         const std::string currCityName = gridData.cityNames[cityID];
+        if (newCityName.empty()) {
+            std::ostringstream oss;
+            oss << "=== Extracting city data failure ===" << std::endl;
+            oss << "City name is empty on following line: " << cityLine << std::endl;
+            Utils::PrintNewlines(1, oss);
+            extractFailReason = oss.str();
+
+            delete[] allTokens;
+            allTokens = nullptr;
+            return false;
+        }
         if (!currCityName.empty() && currCityName != newCityName) {
             std::ostringstream oss;
             oss << "=== Extracting city data failure ===" << std::endl;
             oss << "Attempting to override existing city name with new name: " << cityLine << std::endl;
-            Utils::PrintNewlines(2, oss);
+            Utils::PrintNewlines(1, oss);
             extractFailReason = oss.str();
 
             delete[] allTokens;
+            allTokens = nullptr;
             return false;
         }
 
@@ -341,6 +368,7 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
         extractFailReason = oss.str();
 
         delete[] allTokens;
+        allTokens = nullptr;
         return false;
     }
 
@@ -353,6 +381,7 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
         extractFailReason = oss.str();
 
         delete[] allTokens;
+        allTokens = nullptr;
         return false;
     }
 
@@ -361,6 +390,7 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
     gridData.cityGrid[xAdjusted][yAdjusted] = cityID;
 
     delete[] allTokens;
+    allTokens = nullptr;
     return true;
 }
 
@@ -387,7 +417,7 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
     const std::string cloudOrPressureStr = cloudOrPressure ? "cloud" : "pressure";
 
     int tokenCount = 0;
-    std::string *const allTokens = Utils::TokenizeString(dataLine, "-", tokenCount);
+    std::string *allTokens = Utils::TokenizeString(dataLine, "-", tokenCount);
     if (tokenCount != 2) {
         std::ostringstream oss;
         oss << "=== Extract " << cloudOrPressureStr << " data failure ===" << std::endl;
@@ -400,7 +430,7 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
     int xCoord = 0, yCoord = 0;
     {
         int coordTokenCount = 0;
-        std::string *const coordTokens = Utils::TokenizeString(allTokens[0], ",", coordTokenCount, true);
+        std::string *coordTokens = Utils::TokenizeString(allTokens[0], ",", coordTokenCount, true);
 
         // [0] - "[3", [1] - "7]"
         if (coordTokenCount != 2) {
@@ -411,6 +441,8 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
 
             delete[] allTokens;
             delete[] coordTokens;
+            allTokens = nullptr;
+            coordTokens = nullptr;
             return false;
         }
 
@@ -426,6 +458,8 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
 
             delete[] allTokens;
             delete[] coordTokens;
+            allTokens = nullptr;
+            coordTokens = nullptr;
             return false;
         }
 
@@ -442,9 +476,12 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
 
             delete[] allTokens;
             delete[] coordTokens;
+            allTokens = nullptr;
+            coordTokens = nullptr;
             return false;
         }
         delete[] coordTokens;
+        coordTokens = nullptr;
     }
 
     // Extract the cell value
@@ -454,6 +491,7 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
             cellValue = std::stoi(allTokens[1]);
         } catch (const std::exception &e) {
             delete[] allTokens;
+            allTokens = nullptr;
             return false;
         }
     }
@@ -466,6 +504,7 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
         extractFailReason = oss.str();
 
         delete[] allTokens;
+        allTokens = nullptr;
         return false;
     }
 
@@ -478,5 +517,6 @@ bool DataLoader::ExtractGenericDataLine(const std::string &dataLine, GridData &g
         gridData.pressureGrid[xAdjusted][yAdjusted] = cellValue;
     }
     delete[] allTokens;
+    allTokens = nullptr;
     return true;
 }

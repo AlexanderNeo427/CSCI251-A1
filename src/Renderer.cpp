@@ -5,8 +5,10 @@
 #include <iostream>
 
 void Renderer::RenderGrid(
-    int **const data, const Vec2D &bottomLeft,
-    const Vec2D &topRight, const RENDER_MODE renderMode) {
+    int **const data, 
+    const std::array<std::string, CITY_ID_COUNT>& cityNames,
+    const Vec2D &bottomLeft, const Vec2D &topRight, 
+    const RENDER_MODE renderMode) {
 
     const int rangeX = (topRight.x - bottomLeft.x) + 1;
     const int rangeY = (topRight.y - bottomLeft.y) + 1;
@@ -47,10 +49,14 @@ void Renderer::RenderGrid(
 
             switch (renderMode) {
                 case RENDER_MODE::CITY: {
-                    if (cellValue == 0) {
-                        std::cout << std::setw(xCharWidth) << "";
-                    } else {
+                    std::string cityName = "";
+                    if (cellValue >= 0 && cellValue < CITY_ID_COUNT) {
+                        cityName = cityNames[cellValue];
+                    }
+                    if (!cityName.empty()) {
                         std::cout << indexColor << std::setw(xCharWidth) << cellValue << ANSI::DEFAULT;
+                    } else {
+                        std::cout << std::setw(xCharWidth) << "";
                     }
                     break;
                 }

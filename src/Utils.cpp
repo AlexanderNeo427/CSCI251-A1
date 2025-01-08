@@ -28,7 +28,7 @@ std::string *Utils::TokenizeString(std::string str, const std::string &delimiter
     }
     tokenCount++; // Last token
 
-    std::string *allTokens = new std::string[tokenCount];
+    std::string *const allTokens = new std::string[tokenCount];
     std::size_t index = 0;
     str = copyOfOriginalStr; // Reset string
 
