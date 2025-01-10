@@ -1,1 +1,1 @@
-# CSCI251-A1-Preview
+# CSCI251 Assignment 1 [Weather Information Processing System]
