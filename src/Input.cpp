@@ -38,7 +38,6 @@ CharInputStatus Input::AwaitCharInput(const std::string &prompt) {
         retStatus.message = "Input must be of length 1";
         return retStatus;
     }
-
     retStatus.input = strInputStatus.input[0];
     retStatus.success = true;
     return retStatus;
@@ -46,7 +45,6 @@ CharInputStatus Input::AwaitCharInput(const std::string &prompt) {
 
 IntInputStatus Input::AwaitIntInput(const std::string &prompt) {
     IntInputStatus retStatus;
-
     try {
         const StrInputStatus strInputStatus = Input::AwaitStrInput(prompt);
         if (!strInputStatus.success) {
@@ -55,6 +53,11 @@ IntInputStatus Input::AwaitIntInput(const std::string &prompt) {
             return retStatus;
         }
         const int extractedInt = std::stoi(strInputStatus.input);
+        if (strInputStatus.input.find(".") != std::string::npos) {
+            retStatus.success = false;
+            retStatus.message = "Input::AwaitIntInput() - No floating points allowed";
+            return retStatus;
+        }
         retStatus.input = extractedInt;
         retStatus.success = true;
         return retStatus;
@@ -68,9 +71,10 @@ IntInputStatus Input::AwaitIntInput(const std::string &prompt) {
     return retStatus;
 }
 
-void Input::AwaitEnterInput(const std::string& prompt) {
+void Input::AwaitEnterInput(const std::string &prompt) {
     if (!prompt.empty()) {
         std::cout << prompt;
     }
-    std::cin.get();
+    std::string discardInput;
+    std::getline(std::cin, discardInput);
 }

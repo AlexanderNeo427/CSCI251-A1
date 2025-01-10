@@ -7,6 +7,7 @@ int main() {
     GridData gridData;
 
     while (true) {
+        system("clear");
         std::cout << ANSI::DEFAULT;
         WeatherApp::PrintMainMenu();
 
@@ -39,7 +40,7 @@ int main() {
 
     // Cleanup
     if (gridData.isDataLoaded) {
-        Utils::FreeMemory(gridData); 
+        Utils::FreeMemory(gridData);
     }
     return EXIT_SUCCESS;
 };

@@ -11,7 +11,7 @@ const int CITY_ID_COUNT = 100;
 namespace ANSI {
     using Color = std::string;
 
-    const ANSI::Color DEFAULT = "\033[0m";
+    const ANSI::Color DEFAULT = "\033[37m";
     const ANSI::Color RED = "\033[31m";
     const ANSI::Color GREEN = "\033[32m";
     const ANSI::Color YELLOW = "\033[33m";

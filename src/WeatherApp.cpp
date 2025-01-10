@@ -8,10 +8,10 @@
 
 void WeatherApp::PrintMainMenu() {
     std::cout << ANSI::CYAN << std::endl;
-    std::cout << "----------------------------" << std::endl;
-    std::cout << "Student ID:   9085610" << std::endl;
-    std::cout << "Student Name: Alexander Neo" << std::endl;
-    std::cout << "----------------------------" << std::endl;
+    std::cout << "-------------------------------" << std::endl;
+    std::cout << "| Student ID:   9085610       |" << std::endl;
+    std::cout << "| Student Name: Alexander Neo |" << std::endl;
+    std::cout << "-------------------------------" << std::endl;
     std::cout << ANSI::DEFAULT;
     std::cout << "Welcome to Weather Information Processing System!";
     Utils::PrintNewlines(2);
@@ -36,6 +36,7 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
             }
             Utils::PrintNewlines(1);
             std::cout << "All records successfully stored. Going back to main menu..." << std::endl;
+            Input::AwaitEnterInput();
             break;
         }
         case MENU_OPTION::DISPLAY_CITY_MAP: {
