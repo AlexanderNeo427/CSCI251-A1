@@ -7,6 +7,7 @@
 
 using CityID = int;
 const int CITY_ID_COUNT = 100;
+const int INDEX_COLOUR_COUNT = 10;
 
 namespace ANSI {
     using Color = std::string;
@@ -20,7 +21,7 @@ namespace ANSI {
     const ANSI::Color WHITE = "\033[37m";
 }; // namespace ANSI
 
-const std::array<ANSI::Color, 10> INDEX_COLOURS = {
+const ANSI::Color INDEX_COLOURS[INDEX_COLOUR_COUNT] = {
     ANSI::RED,
     ANSI::GREEN,
     ANSI::YELLOW,
@@ -67,7 +68,7 @@ struct GridData {
     // [3] = "Big_city"
     // [4] = ""
     // etc.....
-    std::array<std::string, CITY_ID_COUNT> cityNames;
+    std::string cityNames[CITY_ID_COUNT];
 
     bool isDataLoaded;
     Vec2D bottomLeft, topRight;

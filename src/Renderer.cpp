@@ -1,27 +1,27 @@
 #include "Renderer.h"
-#include "Utils.h"
 #include "SummaryReport.h"
+#include "Utils.h"
 #include <iomanip>
 #include <iostream>
 
 void Renderer::RenderGrid(
-    int **const data, 
-    const std::array<std::string, CITY_ID_COUNT>& cityNames,
-    const Vec2D &bottomLeft, const Vec2D &topRight, 
+    int **const data,
+    std::string *const cityNames,
+    const Vec2D &bottomLeft, const Vec2D &topRight,
     const RENDER_MODE renderMode) {
 
     const int rangeX = (topRight.x - bottomLeft.x) + 1;
     const int rangeY = (topRight.y - bottomLeft.y) + 1;
 
     const int xCharWidth = std::max(
-        std::to_string(topRight.x).length(),
-        std::to_string(bottomLeft.x).length()
-    ) + 1;
+                               std::to_string(topRight.x).length(),
+                               std::to_string(bottomLeft.x).length()) +
+                           1;
     const int yCharWidth = std::max(
-        std::to_string(topRight.y).length(),
-        std::to_string(bottomLeft.y).length()
-    ) + 1;
-    
+                               std::to_string(topRight.y).length(),
+                               std::to_string(bottomLeft.y).length()) +
+                           1;
+
     const int leftPad = 3;
     const int wallLength = rangeX + 2;
 
@@ -43,7 +43,7 @@ void Renderer::RenderGrid(
             const int cellValue = data[x][y];
             const int indexValue = cellValue % 10;
             ANSI::Color indexColor = ANSI::DEFAULT;
-            if (indexValue >= 0 && indexValue < static_cast<int>(INDEX_COLOURS.size())) {
+            if (indexValue >= 0 && indexValue < static_cast<int>(INDEX_COLOUR_COUNT)) {
                 indexColor = INDEX_COLOURS[indexValue];
             }
 
@@ -64,7 +64,7 @@ void Renderer::RenderGrid(
                     const int indexValue = static_cast<float>(cellValue) / 10.0f;
 
                     ANSI::Color indexColor = ANSI::DEFAULT;
-                    if (indexValue >= 0 && indexValue < static_cast<int>(INDEX_COLOURS.size())) {
+                    if (indexValue >= 0 && indexValue < static_cast<int>(INDEX_COLOUR_COUNT)) {
                         indexColor = INDEX_COLOURS[indexValue];
                     }
                     std::cout << indexColor << std::setw(xCharWidth) << indexValue;

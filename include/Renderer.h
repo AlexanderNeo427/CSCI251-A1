@@ -5,11 +5,11 @@
 
 namespace Renderer {
     void RenderGrid(
-        int **const data, 
-        const std::array<std::string, CITY_ID_COUNT>& cityNames,
+        int **const data,
+        std::string *const cityNames,
         const Vec2D &bottomLeft,
         const Vec2D &topRight,
-        const RENDER_MODE renderMode);    
+        const RENDER_MODE renderMode);
 };
 
 #endif
