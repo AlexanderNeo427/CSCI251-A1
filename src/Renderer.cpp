@@ -13,14 +13,20 @@ void Renderer::RenderGrid(
     const int rangeX = (topRight.x - bottomLeft.x) + 1;
     const int rangeY = (topRight.y - bottomLeft.y) + 1;
 
-    const int xCharWidth = std::max(
-                               std::to_string(topRight.x).length(),
-                               std::to_string(bottomLeft.x).length()) +
-                           1;
-    const int yCharWidth = std::max(
-                               std::to_string(topRight.y).length(),
-                               std::to_string(bottomLeft.y).length()) +
-                           1;
+    int highestCityID = 0; 
+    for (CityID cityID = 0; cityID < CITY_ID_COUNT; cityID++) {
+        if (!cityNames[cityID].empty()) {
+            highestCityID = std::max(cityID, highestCityID);
+        }
+    }
+
+    int xCharWidth = std::max(std::to_string(topRight.x).length(),
+                              std::to_string(bottomLeft.x).length()) + 1;
+    xCharWidth = std::max(
+        xCharWidth,
+        static_cast<int>(std::to_string(highestCityID).length() + 1));
+    const int yCharWidth = std::max(std::to_string(topRight.y).length(),
+                                    std::to_string(bottomLeft.y).length()) + 1;
 
     const int leftPad = 3;
     const int wallLength = rangeX + 2;

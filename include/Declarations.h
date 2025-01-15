@@ -11,7 +11,7 @@ const int INDEX_COLOUR_COUNT = 10;
 namespace ANSI {
     using Color = std::string;
 
-    const ANSI::Color DEFAULT = "\033[37m";
+    const ANSI::Color DEFAULT = "\033[0m";
     const ANSI::Color RED = "\033[31m";
     const ANSI::Color GREEN = "\033[32m";
     const ANSI::Color YELLOW = "\033[33m";
@@ -77,15 +77,6 @@ struct GridData {
         : cityNames(), isDataLoaded(false),
           bottomLeft(), topRight(),
           cityGrid(nullptr), cloudGrid(nullptr), pressureGrid(nullptr) {}
-
-    GridData(const GridData &rhs)
-        : cityNames(rhs.cityNames),
-          isDataLoaded(rhs.isDataLoaded),
-          bottomLeft(rhs.bottomLeft),
-          topRight(rhs.topRight),
-          cityGrid(rhs.cityGrid),
-          cloudGrid(rhs.cloudGrid),
-          pressureGrid(rhs.pressureGrid){};
 };
 
 #endif

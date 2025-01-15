@@ -3,7 +3,7 @@
 #include <iostream>
 
 void SummaryReport::GenerateSummaryReport(const GridData &gridData) {
-    auto gridBoundary = Boundary();
+    Boundary gridBoundary;
     gridBoundary.min = gridData.bottomLeft;
     gridBoundary.max = gridData.topRight;
 
@@ -31,13 +31,17 @@ void SummaryReport::GenerateSummaryReport(const GridData &gridData) {
             const Boundary expandedBoundary = SummaryReport::ExpandedBoundary(cityBounds, gridBoundary);
 
             std::cout << ANSI::YELLOW << std::setw(weatherDataWidth) << std::left << "Ave. Cloud Cover (ACC): ";
+
             const double avgCloudCover = SummaryReport::ComputeGridAverage(gridData.cloudGrid, expandedBoundary, gridBoundary);
+
             const char cloudCoverLMH = SummaryReport::GetLMH(avgCloudCover);
             std::cout << ANSI::DEFAULT << std::fixed << std::setprecision(2) << std::setw(4) << avgCloudCover;
             std::cout << " (" << cloudCoverLMH << ")" << std::endl;
 
             std::cout << ANSI::YELLOW << std::setw(weatherDataWidth) << std::left << "Ave. Pressure (AP): ";
+
             const double avgPressure = SummaryReport::ComputeGridAverage(gridData.pressureGrid, expandedBoundary, gridBoundary);
+
             const char pressureLMH = SummaryReport::GetLMH(avgPressure);
             std::cout << ANSI::DEFAULT << std::fixed << std::setprecision(2) << std::setw(4) << avgPressure;
             std::cout << " (" << pressureLMH << ")" << std::endl;
@@ -53,7 +57,7 @@ void SummaryReport::GenerateSummaryReport(const GridData &gridData) {
 }
 
 Boundary SummaryReport::ExpandedBoundary(const Boundary &cityBounds, const Boundary &gridBounds) {
-    auto newCityBounds = Boundary();
+    Boundary newCityBounds;
     newCityBounds.min.x = std::max(cityBounds.min.x - 1, gridBounds.min.x);
     newCityBounds.min.y = std::max(cityBounds.min.y - 1, gridBounds.min.y);
     newCityBounds.max.x = std::min(cityBounds.max.x + 1, gridBounds.max.x);
@@ -65,7 +69,7 @@ Boundary SummaryReport::GetCityBounds(int **const cityData, const Boundary &grid
     const int rangeX = (gridBounds.max.x - gridBounds.min.x) + 1;
     const int rangeY = (gridBounds.max.y - gridBounds.min.y) + 1;
 
-    auto cityBounds = Boundary();
+    Boundary cityBounds;
     cityBounds.min.x = 999999;
     cityBounds.min.y = 999999;
     cityBounds.max.x = -999999;

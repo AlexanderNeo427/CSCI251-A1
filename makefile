@@ -1,8 +1,6 @@
 # Compiler and Flags
 CXX = g++
-CXXFLAGS = -Wall -Werror -std=c++14 -Iinclude
-# CXXFLAGS_BUILD = -Wall -Wextra -Werror -std=c++14 -Iinclude
-# CXXFLAGS_DEBUG = -Wall -std=c++14 -Iinclude
+CXXFLAGS = -Wall -Wextra -Werror -std=c++14 -Iinclude
 
 # Directories
 SRC_DIR = src
@@ -14,10 +12,10 @@ SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 
 # Executable Name
-TARGET = $(BUILD_DIR)/main
+TARGET = ./main.app run
 
 # Default Target
-all: $(TARGET) run
+all: $(TARGET) 
 
 # Build Executable
 $(TARGET): $(OBJECTS)
