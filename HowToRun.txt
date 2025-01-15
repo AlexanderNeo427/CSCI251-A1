@@ -1,0 +1,8 @@
+g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/DataLoader.cpp -o build/DataLoader.o && \
+g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/Input.cpp -o build/Input.o && \
+g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/main.cpp -o build/main.o && \
+g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/Renderer.cpp -o build/Renderer.o && \
+g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/SummaryReport.cpp -o build/SummaryReport.o && \
+g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/Utils.cpp -o build/Utils.o && \
+g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/WeatherApp.cpp -o build/WeatherApp.o && \
+g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -o main.app build/DataLoader.o build/Input.o build/main.o build/Renderer.o build/SummaryReport.o build/Utils.o build/WeatherApp.o 

@@ -12,10 +12,10 @@ SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 
 # Executable Name
-TARGET = ./main.app run
+TARGET = ./main.app
 
 # Default Target
-all: $(TARGET) 
+all: $(TARGET) run
 
 # Build Executable
 $(TARGET): $(OBJECTS)
@@ -28,7 +28,8 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 # Clean Target
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)/*
+	rm $(TARGET)
 
 # Run Target
 run:
