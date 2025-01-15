@@ -1,7 +1,6 @@
 #ifndef DECLARATIONS_H
 #define DECLARATIONS_H
 
-#include <array>
 #include <string>
 #include <utility>
 

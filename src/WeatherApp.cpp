@@ -26,12 +26,18 @@ void WeatherApp::PrintMainMenu() {
 void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) {
     switch (menuOption) {
         case MENU_OPTION::PROCESS_CONFIG_FILE: {
-            const std::string fileName = "./data/config.txt";
+            const StrInputStatus inputStatus = Input::AwaitStrInput("Please enter filename: ");
+            if (!inputStatus.success) {
+                std::cout << "Error was trying to read input: " << inputStatus.message << std::endl;
+                Input::AwaitEnterInput();
+                break;
+            }
 
             std::string failReason = "";
-            const bool parseSuccess = DataLoader::ParseFile(fileName, gridData, failReason);
+            const bool parseSuccess = DataLoader::ParseFile(inputStatus.input, gridData, failReason);
             if (!parseSuccess) {
                 std::cerr << failReason << std::endl;
+                Input::AwaitEnterInput();
                 break;
             }
             Utils::PrintNewlines(1);
@@ -40,6 +46,11 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
             break;
         }
         case MENU_OPTION::DISPLAY_CITY_MAP: {
+            if (!gridData.isDataLoaded) {
+                std::cout << "No config data loaded..." << std::endl;
+                Input::AwaitEnterInput();
+                break;
+            }
             Renderer::RenderGrid(
                 gridData.cityGrid, gridData.cityNames,
                 gridData.bottomLeft, gridData.topRight, RENDER_MODE::CITY);
@@ -47,6 +58,11 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
             break;
         }
         case MENU_OPTION::CLOUD_MAP_IDX: {
+            if (!gridData.isDataLoaded) {
+                std::cout << "No config data loaded..." << std::endl;
+                Input::AwaitEnterInput();
+                break;
+            }
             Renderer::RenderGrid(
                 gridData.cloudGrid, gridData.cityNames,
                 gridData.bottomLeft, gridData.topRight, RENDER_MODE::INDEX);
@@ -54,6 +70,11 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
             break;
         }
         case MENU_OPTION::CLOUD_MAP_LMH: {
+            if (!gridData.isDataLoaded) {
+                std::cout << "No config data loaded..." << std::endl;
+                Input::AwaitEnterInput();
+                break;
+            }
             Renderer::RenderGrid(
                 gridData.cloudGrid, gridData.cityNames,
                 gridData.bottomLeft, gridData.topRight, RENDER_MODE::LMH);
@@ -61,6 +82,11 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
             break;
         }
         case MENU_OPTION::ATMOS_PRESSURE_IDX: {
+            if (!gridData.isDataLoaded) {
+                std::cout << "No config data loaded..." << std::endl;
+                Input::AwaitEnterInput();
+                break;
+            }
             Renderer::RenderGrid(
                 gridData.pressureGrid, gridData.cityNames,
                 gridData.bottomLeft, gridData.topRight, RENDER_MODE::INDEX);
@@ -68,6 +94,11 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
             break;
         }
         case MENU_OPTION::ATMOS_PRESSURE_LMH: {
+            if (!gridData.isDataLoaded) {
+                std::cout << "No config data loaded..." << std::endl;
+                Input::AwaitEnterInput();
+                break;
+            }
             Renderer::RenderGrid(
                 gridData.pressureGrid, gridData.cityNames,
                 gridData.bottomLeft, gridData.topRight, RENDER_MODE::LMH);
@@ -75,6 +106,11 @@ void WeatherApp::HandleOption(const MENU_OPTION menuOption, GridData &gridData) 
             break;
         }
         case MENU_OPTION::SUMMARY_REPORT: {
+            if (!gridData.isDataLoaded) {
+                std::cout << "No config data loaded..." << std::endl;
+                Input::AwaitEnterInput();
+                break;
+            }
             SummaryReport::GenerateSummaryReport(gridData);
             Input::AwaitEnterInput();
             break;
@@ -102,8 +138,11 @@ std::string WeatherApp::OptionToText(const MENU_OPTION menuOption) {
             return "Summary Report";
         case MENU_OPTION::QUIT:
             return "Quit";
-        default:
-            return "";
+        default: {
+            const std::string msg = "WeatherApp::OptionToText(), menu option is not implemented: ";
+            const int optionIndex = static_cast<int>(menuOption);
+            return msg + std::to_string(optionIndex);
+        }
     }
     return "";
 }

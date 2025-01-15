@@ -14,7 +14,9 @@ int main() {
         // Await valid input
         const IntInputStatus intInputStatus = Input::AwaitIntInput("Please enter your choice: ");
         if (!intInputStatus.success) {
-            std::cerr << intInputStatus.message << std::endl;
+            std::cerr << "Error while reading input: " << intInputStatus.message << ". Please try again" << std::endl;
+            Input::AwaitEnterInput();
+            continue;
         }
 
         // Validate input
@@ -22,6 +24,7 @@ int main() {
         const int numOptions = static_cast<int>(MENU_OPTION::ENTRY_COUNT);
         if (userChoice < 1 || userChoice > numOptions) {
             std::cerr << "Please pick a number from 1-" << numOptions << std::endl;
+            Input::AwaitEnterInput();
             continue;
         }
 
