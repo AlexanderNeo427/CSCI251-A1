@@ -12,7 +12,7 @@ SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 
 # Executable Name
-TARGET = ./main.app
+TARGET = ./csci251_a1.app
 
 # Default Target
 all: $(TARGET) run

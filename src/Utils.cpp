@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include <algorithm>
 #include <sstream>
 
 void Utils::PrintNewlines(const int numLines, std::ostream &os) {
@@ -39,6 +40,15 @@ std::string *Utils::TokenizeString(std::string str, const std::string &delimiter
     }
     allTokens[index] = useTrim ? Utils::TrimString(str) : str; // Last token
     return allTokens;
+}
+
+std::string Utils::ToLower(std::string str) {
+    std::transform(
+        str.begin(), str.end(), str.begin(),
+        [](unsigned char c) {
+            return std::tolower(c);
+        });
+    return str;
 }
 
 void Utils::AllocateMemory(GridData &gridData) {

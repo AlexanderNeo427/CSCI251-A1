@@ -1,3 +1,7 @@
+Using make (recommended): 
+Just run `make` within the terminal at the root of your project
+
+Manually, using g++ (more cumbersome):
 g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/DataLoader.cpp -o build/DataLoader.o && \
 g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/Input.cpp -o build/Input.o && \
 g++ -Wall -Wextra -Werror -std=c++14 -Iinclude -c src/main.cpp -o build/main.o && \

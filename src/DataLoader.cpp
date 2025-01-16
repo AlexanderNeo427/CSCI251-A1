@@ -10,6 +10,11 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
     }
 
     GridData newGridData;
+
+    // The current 'valid line' number.
+    // Empty lines and comments "//" do not count as valid lines
+    int currentValidLineNo = 0;
+
     bool rangeXInitialized = false, rangeYInitialized = false, arraysInitialized = false;
     bool cityInitialized = false, cloudInitialized = false, pressureInitialized = false;
 
@@ -27,7 +32,14 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
 
         if (aLine.empty() || aLine.find("//") == 0) { // Ignore empty lines and comments
             continue;
-        } else if (aLine.find("Grid") != std::string::npos) { // Extract grid range
+        } else {
+            currentValidLineNo++;
+        }
+        // std::cout << "Current Line: " << currentValidLineNo << std::endl;
+        // std::cout << "Line: " << aLine;
+        // Utils::PrintNewlines(2);
+
+        if (currentValidLineNo == 1 || currentValidLineNo == 2) {
             std::string extractFailReason = "";
             bool isRangeX;
 
@@ -45,7 +57,7 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
             } else {
                 rangeYInitialized = true;
             }
-        } else if (aLine.find("citylocation.txt") != std::string::npos) {
+        } else if (currentValidLineNo == 3) {
             std::string readFailReason = "";
             const bool readSuccess = DataLoader::ReadCityTextFile(aLine, newGridData, readFailReason);
             if (!readSuccess) {
@@ -57,7 +69,7 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
             }
             cityInitialized = true;
             std::cout << aLine << ".... done!" << std::endl;
-        } else if (aLine.find("cloudcover.txt") != std::string::npos) {
+        } else if (currentValidLineNo == 4) {
             std::string readFailReason = "";
             const bool readSuccess = DataLoader::ReadGenericTextFile(aLine, newGridData, readFailReason, true);
             if (!readSuccess) {
@@ -69,7 +81,7 @@ bool DataLoader::ParseFile(const std::string &filePath, GridData &gridData, std:
             }
             cloudInitialized = true;
             std::cout << aLine << ".... done!" << std::endl;
-        } else if (aLine.find("pressure.txt") != std::string::npos) {
+        } else if (currentValidLineNo == 5) {
             std::string readFailReason = "";
             const bool readSuccess = DataLoader::ReadGenericTextFile(aLine, newGridData, readFailReason, false);
             if (!readSuccess) {
@@ -210,6 +222,9 @@ bool DataLoader::ReadCityTextFile(const std::string &filePath, GridData &gridDat
 
     std::string aLine;
     while (std::getline(cityDataFile, aLine)) {
+        if (aLine.empty()) {
+            continue;
+        }
         std::string extractFailReason = "";
         const bool extractSuccess = DataLoader::ExtractCityDataLine(aLine, gridData, extractFailReason);
         if (!extractSuccess) {
@@ -227,8 +242,7 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
     if (tokenCount != 3) {
         std::ostringstream oss;
         oss << "=== Extracting city data failure ===" << std::endl;
-        oss << "Following line doesnt adhere to format: " << std::endl;
-        oss << cityLine << std::endl;
+        oss << "Following line has wrong token count (needs to be 3): " << cityLine << std::endl;
         extractFailReason = oss.str();
 
         delete[] allTokens;
@@ -248,7 +262,7 @@ bool DataLoader::ExtractCityDataLine(const std::string &cityLine, GridData &grid
         if (coordCount != 2) {
             std::ostringstream oss;
             oss << "=== Extracting city data failure ===" << std::endl;
-            oss << "Following part of the city data line doesn't adhere to format (wrong token count): " << allTokens[0] << std::endl;
+            oss << "Following part of the city coordinate doesn't adhere to format (wrong token count): " << allTokens[0] << std::endl;
             extractFailReason = oss.str();
 
             delete[] coordTokens;
@@ -403,6 +417,9 @@ bool DataLoader::ReadGenericTextFile(const std::string &filePath, GridData &grid
 
     std::string aLine;
     while (std::getline(dataFile, aLine)) {
+        if (aLine.empty()) {
+            continue;
+        }
         std::string extractFailReason = "";
         const bool extractSuccess = DataLoader::ExtractGenericDataLine(aLine, gridData, extractFailReason, cloudOrPressure);
         if (!extractSuccess) {
