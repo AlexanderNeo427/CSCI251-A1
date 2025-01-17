@@ -117,7 +117,7 @@ void SummaryReport::PrintAscii(const char avgPressureLMH, const char avgCoverage
         } else if (avgCoverageLMH == 'L') {
             std::cout << "~~~~" << std::endl;
             std::cout << "~~~~~" << std::endl;
-            std::cout << "   \\\\\\" << std::endl;
+            std::cout << "  \\\\\\" << std::endl;
         }
     } else if (avgPressureLMH == 'M') {
         if (avgCoverageLMH == 'H') {
